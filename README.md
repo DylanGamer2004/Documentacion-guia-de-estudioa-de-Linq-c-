@@ -15,31 +15,32 @@
 
 | # | Seccion | Temas Clave |
 |---|---------|-------------|
-| 01 | [Que es LINQ?](#1-que-es-linq) | Origen, ventajas, antes/despues, arquitectura interna |
-| 02 | [Tipos de LINQ](#2-tipos-de-linq) | Objects, SQL, XML, Entities, DataSet, PLINQ |
-| 03 | [Sintaxis: Query vs Method](#3-sintaxis-query-vs-method) | Comparativa, cuando usar cada una, conversion |
-| 04 | [Operadores Estandar](#4-operadores-estandar) | Filtrado, proyeccion, ordenamiento, agrupacion, joins |
-| 05 | [Funciones de Agregado — Guia Completa](#5-funciones-de-agregado--guia-completa) | Count, Sum, Average, Min, Max, MinBy, MaxBy, Aggregate, estadisticas |
-| 06 | [LINQ con Colecciones](#6-linq-con-colecciones) | List, Array, Dictionary, String, tipos anonimos, subqueries |
-| 07 | [LINQ con Entity Framework](#7-linq-con-entity-framework) | DbContext, Include, AsNoTracking, proyeccion, raw SQL, SPs |
-| 08 | [LINQ Async — Patrones Asincronos](#8-linq-async--patrones-asincronos) | ToListAsync, CountAsync, IAsyncEnumerable, StreamAsync |
-| 09 | [LINQ to XML y JSON](#9-linq-to-xml-y-json) | XDocument, XElement, System.Text.Json, transformaciones |
-| 10 | [Expresiones Lambda y Arboles de Expresion](#10-expresiones-lambda-y-arboles-de-expresion) | Func, Action, Expression, PredicateBuilder, dinamico |
-| 11 | [Ejecucion Diferida vs Inmediata](#11-ejecucion-diferida-vs-inmediata) | Streaming, non-streaming, materializacion, trampas |
-| 12 | [PLINQ — LINQ Paralelo](#12-plinq--linq-paralelo) | AsParallel, AsOrdered, cancelacion, ForAll, rendimiento |
-| 13 | [Arquitectura de 4 Capas con LINQ](#13-arquitectura-de-4-capas-con-linq) | Capas, repositorio, servicio, presentacion, DI |
-| 14 | [Proyecto Integrado — CRUD Completo](#14-proyecto-integrado--crud-completo) | Solucion completa, migraciones, seeding, ejecucion |
-| 15 | [Patrones Avanzados y Operadores Custom](#15-patrones-avanzados-y-operadores-custom) | Extension methods, Pivot, Chunk, paginacion generica |
-| 16 | [Casos de Uso Avanzados](#16-casos-de-uso-avanzados) | Filtros dinamicos, reportes, pipelines de datos |
-| 17 | [LINQ en GitHub — Repositorio de Ejemplo](#17-linq-en-github--repositorio-de-ejemplo) | Estructura, CI/CD, pruebas, .gitignore |
-| 18 | [Rendimiento y Optimizacion](#18-rendimiento-y-optimizacion) | Profiling, SQL generado, indices, AsSplitQuery |
-| 19 | [Errores Comunes y Buenas Practicas](#19-errores-comunes-y-buenas-practicas) | N+1, memoria, async, tracking, proyeccion |
-| 20 | [De SQL a LINQ — Guia de Migracion](#20-de-sql-a-linq--guia-de-migracion) | Tabla de equivalencias, patrones traducidos |
-| 21 | [Ejercicios y Desafios](#21-ejercicios-y-desafios) | 15 ejercicios progresivos con soluciones |
-| 22 | [Referencia Rapida](#22-referencia-rapida) | Todos los operadores, firmas, ejemplos de una linea |
+| 01 | [Que es LINQ?](#s1-que-es-linq) | Origen, ventajas, antes/despues, arquitectura interna |
+| 02 | [Tipos de LINQ](#s2-tipos-de-linq) | Objects, SQL, XML, Entities, DataSet, PLINQ |
+| 03 | [Sintaxis: Query vs Method](#s3-sintaxis-query-vs-method) | Comparativa, cuando usar cada una, conversion |
+| 04 | [Operadores Estandar](#s4-operadores-estandar) | Filtrado, proyeccion, ordenamiento, agrupacion, joins |
+| 05 | [Funciones de Agregado — Guia Completa](#s5-funciones-agregado) | Count, Sum, Average, Min, Max, MinBy, MaxBy, Aggregate, estadisticas |
+| 06 | [LINQ con Colecciones](#s6-linq-colecciones) | List, Array, Dictionary, String, tipos anonimos, subqueries |
+| 07 | [LINQ con Entity Framework](#s7-linq-entity-framework) | DbContext, Include, AsNoTracking, proyeccion, raw SQL, SPs |
+| 08 | [LINQ Async — Patrones Asincronos](#s8-linq-async) | ToListAsync, CountAsync, IAsyncEnumerable, StreamAsync |
+| 09 | [LINQ to XML y JSON](#s9-linq-xml-json) | XDocument, XElement, System.Text.Json, transformaciones |
+| 10 | [Expresiones Lambda y Arboles de Expresion](#s10-lambda-arboles-expresion) | Func, Action, Expression, PredicateBuilder, dinamico |
+| 11 | [Ejecucion Diferida vs Inmediata](#s11-ejecucion-diferida-inmediata) | Streaming, non-streaming, materializacion, trampas |
+| 12 | [PLINQ — LINQ Paralelo](#s12-plinq) | AsParallel, AsOrdered, cancelacion, ForAll, rendimiento |
+| 13 | [Arquitectura de 4 Capas con LINQ](#s13-arquitectura-4-capas) | Capas, repositorio, servicio, presentacion, DI |
+| 14 | [Proyecto Integrado — CRUD Completo](#s14-proyecto-integrado-crud) | Solucion completa, migraciones, seeding, ejecucion |
+| 15 | [Patrones Avanzados y Operadores Custom](#s15-patrones-avanzados-custom) | Extension methods, Pivot, Chunk, paginacion generica |
+| 16 | [Casos de Uso Avanzados](#s16-casos-uso-avanzados) | Filtros dinamicos, reportes, pipelines de datos |
+| 17 | [LINQ en GitHub — Repositorio de Ejemplo](#s17-linq-github-repositorio) | Estructura, CI/CD, pruebas, .gitignore |
+| 18 | [Rendimiento y Optimizacion](#s18-rendimiento-optimizacion) | Profiling, SQL generado, indices, AsSplitQuery |
+| 19 | [Errores Comunes y Buenas Practicas](#s19-errores-buenas-practicas) | N+1, memoria, async, tracking, proyeccion |
+| 20 | [De SQL a LINQ — Guia de Migracion](#s20-sql-a-linq-migracion) | Tabla de equivalencias, patrones traducidos |
+| 21 | [Ejercicios y Desafios](#s21-ejercicios-desafios) | 15 ejercicios progresivos con soluciones |
+| 22 | [Referencia Rapida](#s22-referencia-rapida) | Todos los operadores, firmas, ejemplos de una linea |
 
 ---
 
+<a id="s1-que-es-linq"></a>
 ## 1. Que es LINQ?
 
 **LINQ** (*Language Integrated Query*) es una caracteristica de C# introducida en **.NET 3.5 (2007)** que permite realizar consultas sobre colecciones de datos utilizando una sintaxis integrada directamente en el lenguaje. Antes de LINQ, cada tipo de fuente de datos requeria una API diferente: SQL para bases de datos, XPath para XML, bucles `foreach` para colecciones en memoria. LINQ unifica todo esto bajo un modelo de programacion unico y consistente.
@@ -121,6 +122,7 @@ using System.Threading.Tasks;         // Async/await
 
 ---
 
+<a id="s2-tipos-de-linq"></a>
 ## 2. Tipos de LINQ
 
 ```
@@ -252,6 +254,7 @@ datos.AsParallel()
 
 ---
 
+<a id="s3-sintaxis-query-vs-method"></a>
 ## 3. Sintaxis: Query vs Method
 
 LINQ tiene **dos sintaxis equivalentes** — ambas compilan al mismo IL y producen resultados identicos. La sintaxis de metodo (fluent) es mas flexible y cubre todos los operadores, mientras que la sintaxis de query es mas legible para joins y agrupamientos complejos.
@@ -327,6 +330,7 @@ var conDescuento2 = productos
 
 ---
 
+<a id="s4-operadores-estandar"></a>
 ## 4. Operadores Estandar
 
 ### 4.1 Filtrado
@@ -679,6 +683,7 @@ var lotes = Enumerable.Range(1, 100).Chunk(10); // 10 lotes de 10 elementos
 
 ---
 
+<a id="s5-funciones-agregado"></a>
 ## 5. Funciones de Agregado — Guia Completa
 
 Las funciones de agregado **reducen una coleccion a un unico valor**. Son esenciales para generar reportes, estadisticas y dashboard en cualquier aplicacion empresarial. En la arquitectura de 4 capas, las funciones de agregado se utilizan intensivamente en la **Capa de Logica de Negocio (BLL)** para calcular metricas que luego se presentan al usuario, y en la **Capa de Repositorio (DAL)** para consultas optimizadas que se traducen a SQL.
@@ -1038,6 +1043,7 @@ var conVariacion = tendenciaMensual
 
 ---
 
+<a id="s6-linq-colecciones"></a>
 ## 6. LINQ con Colecciones
 
 ### Modelos de Ejemplo
@@ -1187,6 +1193,7 @@ bool esPangrama = "abcdefghijklmnopqrstuvwxyz"
 
 ---
 
+<a id="s7-linq-entity-framework"></a>
 ## 7. LINQ con Entity Framework
 
 Entity Framework Core convierte LINQ en SQL automaticamente. Es el proveedor LINQ mas utilizado para bases de datos y reside exclusivamente en la Capa de Acceso a Datos (DAL).
@@ -1343,6 +1350,7 @@ dotnet ef migrations script --project DAL --startup-project Presentacion
 
 ---
 
+<a id="s8-linq-async"></a>
 ## 8. LINQ Async — Patrones Asincronos
 
 Las operaciones asincronas son criticas en aplicaciones web y de servidor para no bloquear hilos mientras se espera la respuesta de la base de datos. EF Core proporciona versiones asincronas de todos los operadores de agregado y materializacion.
@@ -1425,6 +1433,7 @@ public class ProductoService
 
 ---
 
+<a id="s9-linq-xml-json"></a>
 ## 9. LINQ to XML y JSON
 
 ### LINQ to XML — Operaciones Completas
@@ -1550,6 +1559,7 @@ Console.WriteLine(jsonFormateado);
 
 ---
 
+<a id="s10-lambda-arboles-expresion"></a>
 ## 10. Expresiones Lambda y Arboles de Expresion
 
 ### Func y Action
@@ -1637,6 +1647,7 @@ var resultado = ctx.Productos.Where(filtro).ToList();
 
 ---
 
+<a id="s11-ejecucion-diferida-inmediata"></a>
 ## 11. Ejecucion Diferida vs Inmediata
 
 La ejecucion diferida (deferred execution) es uno de los conceptos mas importantes de LINQ. La consulta no se ejecuta cuando se define, sino cuando se itera sobre los resultados.
@@ -1689,6 +1700,7 @@ var any = productos.Any(p => p.Stock == 0);
 
 ---
 
+<a id="s12-plinq"></a>
 ## 12. PLINQ — LINQ Paralelo
 
 PLINQ ejecuta consultas en multiples nucleos del procesador simultaneamente. Es ideal para operaciones intensivas de CPU sobre grandes colecciones en memoria. **No es adecuado para operaciones de E/S como consultas a bases de datos.**
@@ -1728,6 +1740,7 @@ datos.AsParallel()
 
 ---
 
+<a id="s13-arquitectura-4-capas"></a>
 ## 13. Arquitectura de 4 Capas con LINQ — Guia Completa
 
 La arquitectura de 4 capas es un patron de diseno arquitectonico que separa las responsabilidades de una aplicacion en cuatro niveles bien definidos, cada uno con una funcion especifica y limites claros. Este patron es fundamental para construir aplicaciones empresariales robustas, escalables y faciles de mantener. En el contexto de LINQ con C# y SQL Server, cada capa utiliza LINQ de manera diferente: desde las consultas directas en la Capa de Acceso a Datos, pasando por las transformaciones y validaciones en la Capa de Logica de Negocio, hasta el formateo de datos en la Capa de Presentacion.
@@ -3726,6 +3739,7 @@ app.Run();
 
 ---
 
+<a id="s14-proyecto-integrado-crud"></a>
 ## 14. Proyecto Integrado — CRUD Completo
 
 ### Scripts SQL Server — Creacion de Tablas
@@ -3870,6 +3884,7 @@ var resumen = reporteServicio.ResumenInventario();
 
 ---
 
+<a id="s15-patrones-avanzados-custom"></a>
 ## 15. Patrones Avanzados y Operadores Custom
 
 ### Extension Methods Personalizados
@@ -3987,6 +4002,7 @@ var pagina = await ctx.Productos
 
 ---
 
+<a id="s16-casos-uso-avanzados"></a>
 ## 16. Casos de Uso Avanzados
 
 ### Filtros Dinamicos con Expression
@@ -4089,6 +4105,7 @@ public class ReporteVentasService
 
 ---
 
+<a id="s17-linq-github-repositorio"></a>
 ## 17. LINQ en GitHub — Repositorio de Ejemplo
 
 ### .gitignore para Proyectos C#
@@ -4282,6 +4299,7 @@ public class LinqAgregadosTests
 
 ---
 
+<a id="s18-rendimiento-optimizacion"></a>
 ## 18. Rendimiento y Optimizacion
 
 ### Ver el SQL Generado por EF Core
@@ -4355,6 +4373,7 @@ var total = await ctx.Productos.SumAsync(p => p.Precio * p.Stock);
 
 ---
 
+<a id="s19-errores-buenas-practicas"></a>
 ## 19. Errores Comunes y Buenas Practicas
 
 ### Error 1: N+1 Query Problem
@@ -4440,6 +4459,7 @@ var resultado = ctx.Productos
 
 ---
 
+<a id="s20-sql-a-linq-migracion"></a>
 ## 20. De SQL a LINQ — Guia de Migracion
 
 | SQL | LINQ Method | LINQ Query |
@@ -4498,6 +4518,7 @@ var resultado = await ctx.Ventas
 
 ---
 
+<a id="s21-ejercicios-desafios"></a>
 ## 21. Ejercicios y Desafios
 
 ### Nivel Basico
@@ -4619,6 +4640,7 @@ var medianaPorCategoria = productos
 
 ---
 
+<a id="s22-referencia-rapida"></a>
 ## 22. Referencia Rapida
 
 ### Operadores de Filtrado
