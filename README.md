@@ -1,910 +1,158 @@
-# 📘 LINQ en C# — Manual Completo
+# Manual Completo de LINQ en C#
 
-> **Manual Técnico de Referencia** | Visual Studio Community 2022 | .NET 8+ | C# 12
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com)
+[![C#](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=csharp)](https://docs.microsoft.com/dotnet/csharp/)
+[![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-CC2927?style=for-the-badge&logo=microsoftsqlserver)](https://www.microsoft.com/sql-server)
+[![EF Core](https://img.shields.io/badge/EF%20Core-8.0-5C2D91?style=for-the-badge)](https://docs.microsoft.com/ef/core/)
+[![License](https://img.shields.io/badge/Licencia-MIT-green?style=for-the-badge)](LICENSE)
 
----
-
-## 📑 Tabla de Contenido
-
-| Cap | Tema | Operadores |
-|-----|------|------------|
-| 01 | [LINQ Básico — Filtrado y Proyección](#01--linq-básico--filtrado-y-proyección) | `Where`, `Select`, `SelectMany`, `OfType` |
-| 02 | [Ordenamiento y Agrupamiento](#02--ordenamiento-y-agrupamiento) | `OrderBy`, `ThenBy`, `OrderByDescending`, `GroupBy`, `ToLookup` |
-| 03 | [Operaciones de Join](#03--operaciones-de-join) | `Join`, `GroupJoin`, `Zip` |
-| 04 | [Funciones de Agregado](#04--funciones-de-agregado) | `Count`, `LongCount`, `Sum`, `Min`, `Max`, `Average`, `Aggregate` |
-| 05 | [Elementos y Cuantificación](#05--elementos-y-cuantificación) | `First`, `FirstOrDefault`, `Last`, `Single`, `Any`, `All`, `Contains` |
-| 06 | [Partición y Conjuntos](#06--partición-y-conjuntos) | `Take`, `Skip`, `TakeWhile`, `SkipWhile`, `Distinct`, `Union`, `Intersect`, `Except` |
-| 07 | [Conversión y Generación](#07--conversión-y-generación) | `ToArray`, `ToList`, `ToDictionary`, `ToLookup`, `Range`, `Repeat`, `Empty` |
-| 08 | [Sintaxis de Consulta (Query Syntax)](#08--sintaxis-de-consulta-query-syntax) | `from`, `where`, `select`, `join`, `group`, `let`, `into` |
-| 09 | [LINQ to Objects](#09--linq-to-objects) | `List<T>`, Arrays, Strings, `SelectMany` |
-| 10 | [LINQ to XML](#10--linq-to-xml) | `XDocument`, `XElement`, crear/consultar/modificar XML |
-| 11 | [Expresiones Lambda y Árboles de Expresión](#11--expresiones-lambda-y-árboles-de-expresión) | `Func<T>`, `Action<T>`, `Expression<T>`, composición |
-| 12 | [Ejecución Diferida vs Inmediata](#12--ejecución-diferida-vs-inmediata) | Streaming, Non-streaming, materialización |
-| 13 | [PLINQ (Parallel LINQ)](#13--plinq-parallel-linq) | `AsParallel`, `AsOrdered`, `WithCancellation`, `ForAll` |
-| 14 | [Patrones Avanzados](#14--patrones-avanzados) | Operadores custom, `PredicateBuilder`, Pivot |
-| 15 | [Arquitectura de 4 Capas — Conceptos y Diseño](#15--arquitectura-de-4-capas--conceptos-y-diseño) | Capas, dependencias, diagrama |
-| 16 | [Capa de Entidades y Acceso a Datos (DAL)](#16--capa-de-entidades-y-acceso-a-datos-dal) | Entidades, `DbContext`, Repositorio genérico |
-| 17 | [Capa de Lógica de Negocio (BLL)](#17--capa-de-lógica-de-negocio-bll) | Servicios, validación, reglas de negocio |
-| 18 | [Capa de Presentación (UI)](#18--capa-de-presentación-ui) | Consola, menús, formateo de datos |
-| 19 | [Entity Framework Core con SQL Server](#19--entity-framework-core-con-sql-server) | Code-First, Migrations, `Include`, `AsNoTracking` |
-| 20 | [Proyecto Integrado — CRUD Completo con 4 Capas](#20--proyecto-integrado--crud-completo-con-4-capas) | CRUD completo, seeding, ejecución |
+> **Language Integrated Query** — Consultas integradas directamente en el lenguaje C#  
+> **Guia de referencia completa** | .NET 8+ | C# 12 | Visual Studio 2022 | SQL Server | Arquitectura 4 Capas | GitHub Actions
 
 ---
 
-## Estructura de la Solución
+## Tabla de Contenidos
 
-```
-LINQ_Manual_Completo.sln
-├── 01_LINQ_Basico/
-│   └── Program.cs
-├── 02_Ordenamiento_Agrupamiento/
-│   └── Program.cs
-├── 03_Joins/
-│   └── Program.cs
-├── 04_Funciones_Agregado/
-│   └── Program.cs
-├── 05_Elementos_Cuantificacion/
-│   └── Program.cs
-├── 06_Particion_Conjuntos/
-│   └── Program.cs
-├── 07_Conversion_Generacion/
-│   └── Program.cs
-├── 08_Sintaxis_Consulta/
-│   └── Program.cs
-├── 09_LINQ_to_Objects/
-│   └── Program.cs
-├── 10_LINQ_to_XML/
-│   └── Program.cs
-├── 11_Expresiones_Lambda/
-│   └── Program.cs
-├── 12_Ejecucion_Diferida_Inmediata/
-│   └── Program.cs
-├── 13_PLINQ/
-│   └── Program.cs
-├── 14_Patrones_Avanzados/
-│   └── Program.cs
-├── 15_Arquitectura_4Capas/
-│   ├── Entidades/
-│   ├── DAL/
-│   ├── BLL/
-│   └── Presentacion/
-└── 16_EFCore_SQLServer/
-    └── Program.cs
-```
+| # | Seccion | Temas Clave |
+|---|---------|-------------|
+| 01 | [Que es LINQ?](#1-que-es-linq) | Origen, ventajas, antes/despues, arquitectura interna |
+| 02 | [Tipos de LINQ](#2-tipos-de-linq) | Objects, SQL, XML, Entities, DataSet, PLINQ |
+| 03 | [Sintaxis: Query vs Method](#3-sintaxis-query-vs-method) | Comparativa, cuando usar cada una, conversion |
+| 04 | [Operadores Estandar](#4-operadores-estandar) | Filtrado, proyeccion, ordenamiento, agrupacion, joins |
+| 05 | [Funciones de Agregado — Guia Completa](#5-funciones-de-agregado--guia-completa) | Count, Sum, Average, Min, Max, MinBy, MaxBy, Aggregate, estadisticas |
+| 06 | [LINQ con Colecciones](#6-linq-con-colecciones) | List, Array, Dictionary, String, tipos anonimos, subqueries |
+| 07 | [LINQ con Entity Framework](#7-linq-con-entity-framework) | DbContext, Include, AsNoTracking, proyeccion, raw SQL, SPs |
+| 08 | [LINQ Async — Patrones Asincronos](#8-linq-async--patrones-asincronos) | ToListAsync, CountAsync, IAsyncEnumerable, StreamAsync |
+| 09 | [LINQ to XML y JSON](#9-linq-to-xml-y-json) | XDocument, XElement, System.Text.Json, transformaciones |
+| 10 | [Expresiones Lambda y Arboles de Expresion](#10-expresiones-lambda-y-arboles-de-expresion) | Func, Action, Expression, PredicateBuilder, dinamico |
+| 11 | [Ejecucion Diferida vs Inmediata](#11-ejecucion-diferida-vs-inmediata) | Streaming, non-streaming, materializacion, trampas |
+| 12 | [PLINQ — LINQ Paralelo](#12-plinq--linq-paralelo) | AsParallel, AsOrdered, cancelacion, ForAll, rendimiento |
+| 13 | [Arquitectura de 4 Capas con LINQ](#13-arquitectura-de-4-capas-con-linq) | Capas, repositorio, servicio, presentacion, DI |
+| 14 | [Proyecto Integrado — CRUD Completo](#14-proyecto-integrado--crud-completo) | Solucion completa, migraciones, seeding, ejecucion |
+| 15 | [Patrones Avanzados y Operadores Custom](#15-patrones-avanzados-y-operadores-custom) | Extension methods, Pivot, Chunk, paginacion generica |
+| 16 | [Casos de Uso Avanzados](#16-casos-de-uso-avanzados) | Filtros dinamicos, reportes, pipelines de datos |
+| 17 | [LINQ en GitHub — Repositorio de Ejemplo](#17-linq-en-github--repositorio-de-ejemplo) | Estructura, CI/CD, pruebas, .gitignore |
+| 18 | [Rendimiento y Optimizacion](#18-rendimiento-y-optimizacion) | Profiling, SQL generado, indices, AsSplitQuery |
+| 19 | [Errores Comunes y Buenas Practicas](#19-errores-comunes-y-buenas-practicas) | N+1, memoria, async, tracking, proyeccion |
+| 20 | [De SQL a LINQ — Guia de Migracion](#20-de-sql-a-linq--guia-de-migracion) | Tabla de equivalencias, patrones traducidos |
+| 21 | [Ejercicios y Desafios](#21-ejercicios-y-desafios) | 15 ejercicios progresivos con soluciones |
+| 22 | [Referencia Rapida](#22-referencia-rapida) | Todos los operadores, firmas, ejemplos de una linea |
 
 ---
 
-# 01 — LINQ Básico — Filtrado y Proyección
+## 1. Que es LINQ?
 
-Los operadores de filtrado y proyección constituyen los cimientos fundamentales de LINQ. El filtrado permite seleccionar elementos de una colección que cumplen con una condición específica, mientras que la proyección transforma cada elemento en una nueva forma, ya sea extrayendo propiedades individuales o creando nuevos tipos anónimos con datos calculados. Estos operadores son los más utilizados en cualquier aplicación que manipule datos, y su comprensión profunda es esencial para trabajar eficientemente con LINQ en escenarios reales, desde consultas simples en memoria hasta consultas complejas contra bases de datos SQL Server a través de Entity Framework Core.
+**LINQ** (*Language Integrated Query*) es una caracteristica de C# introducida en **.NET 3.5 (2007)** que permite realizar consultas sobre colecciones de datos utilizando una sintaxis integrada directamente en el lenguaje. Antes de LINQ, cada tipo de fuente de datos requeria una API diferente: SQL para bases de datos, XPath para XML, bucles `foreach` para colecciones en memoria. LINQ unifica todo esto bajo un modelo de programacion unico y consistente.
 
-## Where — Filtrado de colecciones
+La arquitectura interna de LINQ se basa en dos interfaces fundamentales: `IEnumerable<T>` para consultas en memoria (LINQ to Objects) y `IQueryable<T>` para consultas que se traducen a otro lenguaje como SQL. Cuando escribes una consulta LINQ contra un `IQueryable<T>`, los operadores no ejecutan codigo directamente, sino que construyen un **arbol de expresion** que el proveedor (como Entity Framework) traduce al lenguaje destino.
 
-El operador `Where` retorna una nueva secuencia que contiene únicamente los elementos que satisfacen la condición especificada en el predicado lambda. Soporta predicados con múltiples condiciones usando operadores lógicos (`&&`, `||`), y existe una sobrecarga que recibe el índice del elemento como segundo parámetro. `Where` es un operador de ejecución diferida (deferred execution), lo que significa que la consulta no se ejecuta hasta que se itera sobre el resultado, ya sea con `foreach`, `ToList()`, o cualquier otra operación de materialización.
+### Antes y Despues de LINQ
 
 ```csharp
-// Where: Productos con precio mayor a $50
-var caros = productos.Where(p => p.Precio > 50);
-
-// Where con condiciones múltiples
-var accesorios = productos.Where(p =>
-    p.Categoria == "Accesorio" && p.Stock < 50);
-
-// Where con índice (segundo parámetro = índice del elemento)
-var primeros5Caros = productos
-    .Where((p, index) => p.Precio > 100 && index < 10);
-
-// Where con operador OR
-var busqueda = productos.Where(p =>
-    p.Nombre.Contains("Laptop") || p.Nombre.Contains("PC"));
-```
-
-**Salida de consola:**
-```
-► Where: Productos con precio mayor a $50
-  Laptop HP             | Computo        | $1200.00 | Stock: 15
-  Teclado Mecanico      | Accesorio      | $80.00   | Stock: 45
-  Monitor Samsung       | Computo        | $450.00  | Stock: 8
-  RAM DDR4 16GB         | Almacenamiento | $75.00   | Stock: 50
-  Impresora Epson       | Impresion      | $280.00  | Stock: 12
-  Auriculares Sony      | Accesorio      | $120.00  | Stock: 25
-
-► Where: Accesorios con stock bajo
-  Teclado Mecanico      | Accesorio      | $80.00   | Stock: 45
-```
-
-> 💡 **Tip:** `Where` no modifica la colección original. Siempre retorna una nueva secuencia `IEnumerable<T>`. Para evaluar la condición, usa siempre una expresión lambda que retorne `bool`.
-
-> ⚠️ **Precaución:** Si aplicas múltiples `Where` consecutivos, LINQ los optimiza internamente en un solo filtro cuando es posible, pero para claridad del código, es preferible combinar las condiciones con `&&` en un solo `Where`.
-
-## Select — Proyección
-
-El operador `Select` transforma cada elemento de la secuencia de entrada en una nueva forma. Puede proyectar a un tipo anónimo (usando `new { }`), seleccionar propiedades individuales, aplicar cálculos sobre los datos, o incluso transformar a un tipo concreto diferente. Al igual que `Where`, `Select` es de ejecución diferida. También dispone de una sobrecarga con índice que permite acceder a la posición del elemento durante la proyección, lo cual es útil para numerar resultados o aplicar lógica basada en la posición.
-
-```csharp
-// Select: Proyección simple — solo nombres
-var nombres = productos.Select(p => p.Nombre);
-
-// Select: Proyección a tipo anónimo (con IVA calculado)
-var conIva = productos.Select(p => new {
-    p.Nombre,
-    PrecioBase = p.Precio,
-    PrecioIVA = p.Precio * 1.16m,
-    Descuento = p.Precio > 500 ? p.Precio * 0.10m : 0
-});
-
-// Select con índice
-var indexados = productos.Select((p, i) =>
-    $"#{i + 1} {p.Nombre} - ${p.Precio:F2}");
-
-// Select: Proyección a tipo concreto
-class ProductoDTO {
-    public string Nombre { get; set; }
-    public decimal PrecioConIVA { get; set; }
+// ❌ SIN LINQ — Imperativo, verboso, propenso a errores
+var resultado = new List<string>();
+foreach (var nombre in nombres)
+{
+    if (nombre.StartsWith("A"))
+        resultado.Add(nombre);
 }
+resultado.Sort();
 
-var dtos = productos.Select(p => new ProductoDTO {
-    Nombre = p.Nombre,
-    PrecioConIVA = p.Precio * 1.16m
-}).ToList();
+// ✅ CON LINQ — Declarativo, limpio, tipado
+var resultado = nombres
+    .Where(n => n.StartsWith("A"))
+    .OrderBy(n => n)
+    .ToList();
 ```
 
-**Salida de consola:**
+### Arquitectura Interna de LINQ
+
 ```
-► Select: Solo nombres
-  Laptop HP, Mouse Logitech, Teclado Mecanico, Monitor Samsung...
-
-► Select: Precio con IVA
-  Laptop HP             | Base: $1200.00 | IVA: $1392.00 | Desc: $120.00
-  Mouse Logitech        | Base: $35.00   | IVA: $40.60   | Desc: $0.00
-  Monitor Samsung       | Base: $450.00  | IVA: $522.00  | Desc: $45.00
-
-► Select con índice
-  #1 Laptop HP - $1200.00
-  #2 Mouse Logitech - $35.00
-  #3 Teclado Mecanico - $80.00
+                    Codigo C#
+                       │
+            ┌──────────▼──────────┐
+            │   Compilador C#     │
+            │  (traduce a         │
+            │   llamadas de       │
+            │   metodos extension)│
+            └──────────┬──────────┘
+                       │
+          ┌────────────▼────────────┐
+          │   Tipo de Secuencia     │
+          │                         │
+    ┌─────▼─────┐           ┌──────▼──────┐
+    │IEnumerable│           │ IQueryable  │
+    │   <T>     │           │    <T>      │
+    └─────┬─────┘           └──────┬──────┘
+          │                        │
+    ┌─────▼──────┐          ┌─────▼──────┐
+    │  LINQ to   │          │  Proveedor │
+    │  Objects   │          │  (EF Core) │
+    │(en memoria)│          │(traduce a  │
+    └─────┬──────┘          │   SQL)     │
+          │                 └─────┬──────┘
+    ┌─────▼──────┐          ┌─────▼──────┐
+    │  IL Code   │          │  SQL Server │
+    │  (directo) │          │  (remoto)   │
+    └────────────┘          └────────────┘
 ```
 
-## SelectMany — Aplanar colecciones
+### Ventajas Clave de LINQ
 
-`SelectMany` es uno de los operadores más poderosos y subestimados de LINQ. Mientras que `Select` produce una secuencia de secuencias (uno-a-uno), `SelectMany` aplana colecciones anidadas en una secuencia única (uno-a-muchos). Es esencial cuando se trabaja con listas dentro de objetos, como las categorías de un producto, los pedidos de un cliente, o los tags de un artículo. En sintaxis de consulta, `SelectMany` se expresa con múltiples cláusulas `from`, lo que lo hace más legible en consultas complejas.
+| Ventaja | Descripcion | Ejemplo |
+|---------|-------------|---------|
+| **Legibilidad** | Código declarativo, expresa "que" no "como" | `.Where(p => p.Activo)` vs bucle foreach |
+| **Seguridad de tipos** | Errores detectados en compilacion, no en ejecucion | `p.Precioo` no compila |
+| **IntelliSense** | Autocompletado total en Visual Studio/Rider | Todas las propiedades disponibles |
+| **Unificacion** | Misma sintaxis para objetos, XML, BD, JSON | `from x in fuente` funciona en cualquier fuente |
+| **Composicion** | Operadores encadenables como pipeline | `.Where().OrderBy().Select().Take()` |
+| **Depuracion** | Puedes inspeccionar consultas paso a paso | Breakpoint en cada operador |
+
+### Espacios de Names Necesarios
 
 ```csharp
-// SelectMany: Aplanar lista de listas
-var categorias = new List<List<string>> {
-    new() { "Laptop", "PC", "Tablet" },
-    new() { "Mouse", "Teclado" },
-    new() { "SSD", "RAM", "USB" }
-};
-var todos = categorias.SelectMany(cat => cat);
-// Resultado: Laptop, PC, Tablet, Mouse, Teclado, SSD, RAM, USB
-
-// SelectMany con resultado en tipo anónimo
-var productosConCategorias = productos
-    .SelectMany(p => p.Tags, (producto, tag) => new {
-        Producto = producto.Nombre,
-        Tag = tag
-    });
-
-// SelectMany: Obtener todos los pedidos de todos los clientes
-var todosLosPedidos = clientes.SelectMany(c => c.Pedidos);
-
-// SelectMany con filtro combinado
-var pedidosGrandes = clientes
-    .SelectMany(c => c.Pedidos)
-    .Where(p => p.Total > 1000)
-    .OrderByDescending(p => p.Total);
-```
-
-**Salida de consola:**
-```
-► SelectMany: Todas las categorías aplanadas
-  Laptop, PC, Tablet, Mouse, Teclado, SSD, RAM, USB
-
-► SelectMany: Productos con sus tags
-  Laptop HP       | Tag: computo
-  Laptop HP       | Tag: premium
-  Mouse Logitech  | Tag: accesorio
-  Mouse Logitech  | Tag: economico
-```
-
-> 💡 **Tip:** `SelectMany` es equivalente a `flatMap` en otros lenguajes como JavaScript o Java. En Query Syntax, se escribe como múltiples cláusulas `from`.
-
-## OfType — Filtrar por tipo
-
-El operador `OfType<T>` filtra los elementos de una colección heterogénea (tipicamente `IEnumerable<object>` o `ArrayList`) y retorna solo los que son del tipo especificado. A diferencia de `Cast<T>`, que lanza una excepción si un elemento no se puede convertir, `OfType<T>` simplemente omite los elementos que no coinciden con el tipo. Esto lo hace ideal para trabajar con colecciones legacy o APIs que retornan `object`, como ciertas colecciones de Windows Forms o datos deserializados dinámicamente.
-
-```csharp
-// OfType: Filtrar enteros de una colección mixta
-object[] mixta = { 1, "hola", 3.14, 42, true, "mundo", 7 };
-var enteros = mixta.OfType<int>();      // Resultado: 1, 42, 7
-var cadenas = mixta.OfType<string>();    // Resultado: "hola", "mundo"
-
-// OfType con controles Windows Forms
-var botones = this.Controls.OfType<Button>();
-var textBoxes = this.Controls.OfType<TextBox>();
-
-// OfType + Where combinado
-var enterosGrandes = mixta.OfType<int>().Where(x => x > 10);
-// Resultado: 42
-```
-
-> ⚠️ **Nota:** `OfType` solo filtra tipos compatibles en tiempo de ejecución. No realiza conversiones explícitas. Para conversiones, usa `Cast<T>` seguido de `Select`.
-
-### Tabla resumen — Operadores básicos
-
-| Operador | Tipo | Ejecución | Descripción |
-|----------|------|-----------|-------------|
-| `Where` | Filtrado | Diferida | Filtra elementos basándose en un predicado |
-| `Select` | Proyección | Diferida | Transforma cada elemento en una nueva forma |
-| `SelectMany` | Proyección | Diferida | Aplana colecciones anidadas en una secuencia |
-| `OfType<T>` | Filtrado | Diferida | Filtra elementos por tipo en colecciones heterogéneas |
-| `Cast<T>` | Conversión | Diferida | Convierte todos los elementos al tipo especificado |
-
----
-
-# 02 — Ordenamiento y Agrupamiento
-
-Los operadores de ordenamiento permiten clasificar los datos de forma ascendente o descendente, con soporte para múltiples criterios mediante `ThenBy` y `ThenByDescending`. Los operadores de agrupamiento organizan los elementos en grupos basados en una clave común, lo que es fundamental para generar reportes, estadísticas y resúmenes de datos. La combinación de ordenamiento y agrupamiento con funciones de agregado permite crear consultas analíticas poderosas similares a las que se realizan con `GROUP BY` en SQL Server.
-
-## OrderBy / OrderByDescending / ThenBy / ThenByDescending
-
-`OrderBy` ordena los elementos de la secuencia en orden ascendente según la clave especificada, mientras que `OrderByDescending` lo hace en orden descendente. Para ordenamientos múltiples (equivalente a `ORDER BY Col1, Col2` en SQL), se usa `ThenBy` y `ThenByDescending` después del `OrderBy` inicial. Es importante notar que si se encadenan múltiples `OrderBy`, cada uno reemplaza al anterior; para ordenamientos múltiples siempre debe usarse `ThenBy` después del primer `OrderBy`.
-
-```csharp
-// OrderBy: Orden ascendente por salario
-var porSalario = empleados.OrderBy(e => e.Salario);
-
-// OrderByDescending: Orden descendente por antigüedad
-var porAntiguedad = empleados.OrderByDescending(e => e.Antiguedad);
-
-// ThenBy: Ordenamiento múltiple (equivalente a ORDER BY Dept, Salario)
-var multiOrden = empleados
-    .OrderBy(e => e.Departamento)
-    .ThenBy(e => e.Salario);
-
-// Ordenamiento con condición personalizada
-var porPrioridad = tareas
-    .OrderBy(t => t.Prioridad == "Alta" ? 0 :
-                  t.Prioridad == "Media" ? 1 : 2)
-    .ThenBy(t => t.FechaLimite);
-
-// Ordenamiento por múltiples campos
-var completo = empleados
-    .OrderBy(e => e.Departamento)
-    .ThenByDescending(e => e.Salario)
-    .ThenBy(e => e.Nombre);
-```
-
-**Salida de consola:**
-```
-► OrderBy: Empleados ordenados por salario (ascendente)
-  Laura Sanchez     | RRHH         | $3200.00
-  Diego Ramirez     | RRHH         | $3400.00
-  Ana Garcia        | Ventas       | $3500.00
-  Pedro Martinez    | Ventas       | $3800.00
-  Carlos Lopez      | Finanzas     | $4200.00
-  Maria Rodriguez   | TI           | $4500.00
-  Jorge Fernandez   | TI           | $5500.00
-
-► ThenBy: Por departamento, luego por salario
-  Finanzas | Carlos Lopez     | $4200.00
-  RRHH     | Laura Sanchez    | $3200.00
-  RRHH     | Diego Ramirez    | $3400.00
-  TI       | Maria Rodriguez  | $4500.00
-  TI       | Jorge Fernandez  | $5500.00
-  Ventas   | Ana Garcia       | $3500.00
-  Ventas   | Pedro Martinez   | $3800.00
-```
-
-> ⚠️ **Error común:** No uses `OrderBy` encadenados para ordenar por múltiples campos. Cada `OrderBy` nuevo resetea el ordenamiento. Usa `ThenBy` después del primer `OrderBy`.
-
-## GroupBy — Agrupamiento
-
-`GroupBy` organiza los elementos en grupos basados en una clave. Cada grupo es un objeto `IGrouping<TKey, TElement>` que contiene la propiedad `Key` (la clave del grupo) y es iterable sobre los elementos del grupo. Se puede combinar con proyecciones para obtener estadísticas por grupo (promedio, suma, máximo, mínimo), lo cual es equivalente a las consultas `GROUP BY` con funciones de agregado en SQL Server. También soporta claves compuestas usando tipos anónimos.
-
-```csharp
-// GroupBy: Agrupar por departamento
-var grupos = empleados.GroupBy(e => e.Departamento);
-
-foreach (var grupo in grupos) {
-    Console.WriteLine($"Departamento: {grupo.Key}");
-    foreach (var emp in grupo)
-        Console.WriteLine($"  {emp.Nombre} - ${emp.Salario}");
-}
-
-// GroupBy + Select: Estadísticas por grupo
-var salariosPromedio = empleados
-    .GroupBy(e => e.Departamento)
-    .Select(g => new {
-        Departamento = g.Key,
-        Cantidad = g.Count(),
-        Promedio = g.Average(e => e.Salario),
-        Maximo = g.Max(e => e.Salario),
-        Minimo = g.Min(e => e.Salario),
-        Total = g.Sum(e => e.Salario)
-    });
-
-// GroupBy con clave compuesta
-var porDeptoRango = empleados.GroupBy(e => new {
-    e.Departamento,
-    Rango = e.Salario >= 4500 ? "Alto" : "Medio"
-});
-
-// GroupBy con proyección de elementos
-var nombresPorDepto = empleados
-    .GroupBy(e => e.Departamento, e => e.Nombre);
-```
-
-**Salida de consola:**
-```
-► GroupBy: Salario promedio por departamento
-  Finanzas    | 2 emp | Prom: $4350.00 | Max: $4500.00 | Min: $4200.00 | Total: $8700.00
-  RRHH        | 2 emp | Prom: $3300.00 | Max: $3400.00 | Min: $3200.00 | Total: $6600.00
-  TI          | 3 emp | Prom: $5166.67 | Max: $5500.00 | Min: $4500.00 | Total: $15500.00
-  Ventas      | 3 emp | Prom: $3633.33 | Max: $3800.00 | Min: $3500.00 | Total: $10900.00
-
-► GroupBy: Clave compuesta (Depto + Rango)
-  Finanzas | Alto  | Carlos Lopez  | $4500.00
-  Finanzas | Medio | Ana Torres    | $4200.00
-  TI       | Alto  | Jorge Fernandez | $5500.00
-```
-
-## ToLookup — Agrupación inmediata
-
-`ToLookup` es similar a `GroupBy` pero ejecuta la consulta inmediatamente y retorna un `ILookup<TKey, TElement>`, que es un diccionario inmutable de solo lectura donde cada clave puede tener múltiples valores asociados. La diferencia clave con `GroupBy` es que `GroupBy` usa ejecución diferida mientras que `ToLookup` materializa los resultados en el momento. `ILookup` es ideal cuando necesitas acceder repetidamente a los grupos por clave, ya que la búsqueda es O(1) a diferencia de iterar sobre `IGrouping`.
-
-```csharp
-// ToLookup: Agrupación inmediata
-var lookup = empleados.ToLookup(e => e.Departamento);
-
-// Acceso directo por clave O(1)
-if (lookup.Contains("TI")) {
-    var empTI = lookup["TI"];
-    foreach (var emp in empTI)
-        Console.WriteLine($"  {emp.Nombre} - ${emp.Salario}");
-}
-
-// ToLookup con proyección
-var nombresLookup = empleados
-    .ToLookup(e => e.Departamento, e => e.Nombre);
-
-// ToLookup con clave compuesta
-var compuesto = empleados.ToLookup(e =>
-    e.Departamento + " - " + (e.Salario >= 4000 ? "Senior" : "Junior"));
-```
-
-> 💡 **Tip:** Usa `ToLookup` cuando necesites acceder a los grupos por clave múltiples veces. Usa `GroupBy` cuando solo necesites iterar sobre todos los grupos una vez.
-
-### Tabla resumen — Ordenamiento y Agrupamiento
-
-| Operador | Tipo | Ejecución | Descripción |
-|----------|------|-----------|-------------|
-| `OrderBy` | Ordenamiento | Diferida | Ordena ascendente por clave |
-| `OrderByDescending` | Ordenamiento | Diferida | Ordena descendente por clave |
-| `ThenBy` | Ordenamiento | Diferida | Orden secundario ascendente |
-| `ThenByDescending` | Ordenamiento | Diferida | Orden secundario descendente |
-| `Reverse` | Ordenamiento | Diferida | Invierte el orden de la secuencia |
-| `GroupBy` | Agrupamiento | Diferida | Agrupa por clave (deferred) |
-| `ToLookup` | Agrupamiento | Inmediata | Agrupa por clave (materializado) |
-
----
-
-# 03 — Operaciones de Join
-
-Las operaciones de join en LINQ permiten combinar datos de dos secuencias diferentes basándose en una clave común, de manera similar a los `JOIN` en SQL Server. LINQ ofrece tres operadores principales de join: `Join` para inner joins, `GroupJoin` para group joins (equivalente a LEFT JOIN con agrupamiento), y `Zip` para combinar secuencias por posición. Comprender estos operadores es esencial para trabajar con datos relacionales en memoria y para optimizar consultas contra bases de datos donde las relaciones entre tablas son fundamentales.
-
-## Join — Inner Join
-
-El operador `Join` realiza un inner join entre dos secuencias basándose en claves iguales. Solo incluye los elementos que tienen coincidencia en ambas secuencias, descartando los que no tienen par. Es equivalente a `INNER JOIN` en SQL Server. La sintaxis de método recibe cuatro parámetros: la secuencia externa, la función de clave externa, la función de clave interna, y la función de proyección del resultado.
-
-```csharp
-// Join: Productos con sus categorías
-var productosConCategoria = productos
-    .Join(categorias,
-        p => p.CategoriaId,        // Clave externa
-        c => c.Id,                  // Clave interna
-        (p, c) => new {            // Proyección del resultado
-            p.Nombre,
-            p.Precio,
-            Categoria = c.Nombre
-        });
-
-// Join: Empleados con sus departamentos
-var empDepto = empleados
-    .Join(departamentos,
-        e => e.DepartamentoId,
-        d => d.Id,
-        (e, d) => new {
-            e.Nombre,
-            e.Salario,
-            Departamento = d.Nombre,
-            d.Ubicacion
-        });
-
-// Join con clave compuesta
-var resultado = ordenes
-    .Join(clientes,
-        o => new { o.ClienteId, o.Sucursal },
-        c => new { c.Id, c.Sucursal },
-        (o, c) => new { o.Numero, c.Nombre, o.Total });
-```
-
-**Salida de consola:**
-```
-► Join: Productos con categoría
-  Laptop HP       | $1200.00 | Categoría: Computo
-  Mouse Logitech  | $35.00   | Categoría: Accesorio
-  Monitor Samsung | $450.00  | Categoría: Computo
-
-► Join: Empleados con departamento
-  Jorge Fernandez | $5500.00 | TI - Piso 3
-  Maria Rodriguez | $4500.00 | TI - Piso 3
-```
-
-## GroupJoin — Left Join con agrupamiento
-
-`GroupJoin` realiza un group join que es equivalente a un LEFT OUTER JOIN en SQL, pero en lugar de producir filas duplicadas para la tabla externa, agrupa los resultados internos en una colección por cada elemento externo. Si un elemento externo no tiene coincidencias internas, su colección estará vacía. Para convertir un `GroupJoin` en un verdadero LEFT JOIN plano, se usa `SelectMany` con `DefaultIfEmpty()`.
-
-```csharp
-// GroupJoin: Categorías con sus productos
-var categoriasConProductos = categorias
-    .GroupJoin(productos,
-        c => c.Id,
-        p => p.CategoriaId,
-        (c, prods) => new {
-            Categoria = c.Nombre,
-            Productos = prods,
-            Cantidad = prods.Count()
-        });
-
-// GroupJoin + SelectMany + DefaultIfEmpty = LEFT JOIN
-var leftJoin = categorias
-    .GroupJoin(productos,
-        c => c.Id,
-        p => p.CategoriaId,
-        (c, prods) => new { c, prods })
-    .SelectMany(x => x.prods.DefaultIfEmpty(),
-        (x, p) => new {
-            Categoria = x.c.Nombre,
-            Producto = p?.Nombre ?? "SIN PRODUCTO",
-            Precio = p?.Precio ?? 0
-        });
-```
-
-**Salida de consola:**
-```
-► GroupJoin: Categorías con productos
-  Computo    | 3 productos
-  Accesorio  | 2 productos
-  Impresion  | 1 producto
-  Redes      | 0 productos
-
-► LEFT JOIN: Todas las categorías (con o sin productos)
-  Computo    | Laptop HP        | $1200.00
-  Computo    | Monitor Samsung  | $450.00
-  Redes      | SIN PRODUCTO     | $0.00
-```
-
-## Zip — Combinación por posición
-
-El operador `Zip` combina dos secuencias elemento por elemento basándose en su posición (índice), produciendo una nueva secuencia donde cada elemento es el resultado de aplicar una función a los elementos correspondientes de ambas secuencias. Si las secuencias tienen diferente longitud, `Zip` se detiene cuando la secuencia más corta se agota.
-
-```csharp
-// Zip: Combinar nombres con salarios
-var nombres = new[] { "Ana", "Carlos", "Maria" };
-var salarios = new[] { 3500m, 4200m, 5500m };
-
-var combinados = nombres.Zip(salarios, (nombre, salario) =>
-    $"{nombre} gana ${salario:F2}");
-
-// Zip con tres secuencias (C# 12+)
-var ids = new[] { 1, 2, 3 };
-var resultado = ids.Zip(nombres, salarios)
-    .Select(x => $"ID:{x.First} | {x.Second} | ${x.Third:F2}");
+using System.Linq;                    // Operadores LINQ core
+using System.Collections.Generic;     // IEnumerable<T>, List<T>
+using System.Xml.Linq;                // LINQ to XML (XDocument, XElement)
+using Microsoft.EntityFrameworkCore;  // EF Core (Include, AsNoTracking, ToListAsync)
+using System.Linq.Expressions;        // Expression<T> (arboles de expresion)
+using System.Threading.Tasks;         // Async/await
 ```
 
 ---
 
-# 04 — Funciones de Agregado
+## 2. Tipos de LINQ
 
-Las funciones de agregado calculan un valor único a partir de una colección de valores. Son esenciales para generar reportes, estadísticas y resúmenes de datos en cualquier aplicación empresarial. En el contexto de una arquitectura de 4 capas con SQL Server, las funciones de agregado se utilizan principalmente en la Capa de Lógica de Negocio (BLL) para calcular totales, promedios, y métricas que luego se presentan al usuario. LINQ proporciona funciones de agregado estándar (`Count`, `Sum`, `Min`, `Max`, `Average`) y el operador genérico `Aggregate` para cálculos personalizados.
+```
+LINQ
+├── LINQ to Objects     → Listas, arreglos, IEnumerable<T> (en memoria)
+├── LINQ to SQL         → SQL Server directo (obsoleto, usar EF Core)
+├── LINQ to Entities    → Entity Framework Core (recomendado para BD)
+├── LINQ to XML         → XDocument, XElement (crear/consultar/modificar XML)
+├── LINQ to DataSet     → ADO.NET DataTable/DataSet (legacy)
+├── LINQ to JSON        → System.Text.Json.Nodes (JSON)
+└── PLINQ               → Parallel LINQ (multi-hilo, CPU intensivo)
+```
 
-## Count y LongCount
-
-`Count` retorna el número de elementos en una secuencia, con o sin condición. `LongCount` hace lo mismo pero retorna `long` en lugar de `int`, lo cual es necesario para colecciones con más de 2,147,483,647 elementos. Ambos tienen una sobrecarga sin parámetro que simplemente cuenta todos los elementos, y una sobrecarga con predicado que cuenta solo los que cumplen la condición.
+### LINQ to Objects — En Memoria
 
 ```csharp
-// Count: Total de productos
-int total = productos.Count();
+int[] numeros = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-// Count con condición
-int caros = productos.Count(p => p.Precio > 100);
+var pares = numeros.Where(n => n % 2 == 0).ToList();
+// Resultado: [2, 4, 6, 8, 10]
 
-// LongCount para colecciones grandes
-long totalGrande = datosGrandes.LongCount();
+var cuadrados = numeros.Select(n => n * n).ToList();
+// Resultado: [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-// Count en GroupBy
-var porCategoria = productos
-    .GroupBy(p => p.Categoria)
-    .Select(g => new {
-        Categoria = g.Key,
-        Cantidad = g.Count()
-    });
+var sumaPares = numeros.Where(n => n % 2 == 0).Sum();
+// Resultado: 30
 ```
 
-## Sum, Min, Max, Average
-
-Estas funciones calculan la suma, mínimo, máximo y promedio de valores numéricos en una secuencia. Cada una acepta un selector que indica qué propiedad numérica se debe agregar. Sin el selector, operan directamente sobre secuencias de tipos numéricos (`int`, `decimal`, `double`, etc.).
+### LINQ to XML — Documentos XML
 
 ```csharp
-// Sum: Total del inventario
-decimal totalInventario = productos.Sum(p => p.Precio * p.Stock);
-
-// Min / Max: Rango de precios
-decimal precioMin = productos.Min(p => p.Precio);
-decimal precioMax = productos.Max(p => p.Precio);
-
-// Average: Salario promedio por departamento
-var promedios = empleados
-    .GroupBy(e => e.Departamento)
-    .Select(g => new {
-        Departamento = g.Key,
-        Promedio = g.Average(e => e.Salario)
-    });
-
-// Sum con condición previa
-decimal totalCaros = productos
-    .Where(p => p.Precio > 100)
-    .Sum(p => p.Precio);
-
-// Min/Max con tipo anónimo
-var estadisticas = productos
-    .GroupBy(p => p.Categoria)
-    .Select(g => new {
-        Categoria = g.Key,
-        PrecioMin = g.Min(p => p.Precio),
-        PrecioMax = g.Max(p => p.Precio),
-        StockTotal = g.Sum(p => p.Stock),
-        Promedio = g.Average(p => p.Precio)
-    });
-```
-
-**Salida de consola:**
-```
-► Estadísticas por categoría
-  Computo        | Min: $35.00  | Max: $1200.00 | Stock: 68  | Prom: $561.67
-  Accesorio      | Min: $25.00  | Max: $120.00  | Stock: 120 | Prom: $75.00
-  Almacenamiento | Min: $45.00  | Max: $75.00   | Stock: 150 | Prom: $60.00
-  Impresion      | Min: $280.00 | Max: $280.00  | Stock: 12  | Prom: $280.00
-```
-
-## Aggregate — Agregado personalizado
-
-`Aggregate` es el operador de agregado más flexible. Aplica una función acumuladora sobre la secuencia, comenzando con un valor semilla opcional, y produce un resultado final. Es útil para cálculos personalizados que no se pueden expresar con `Sum`, `Min`, `Max` o `Average`, como concatenaciones con formato, cálculos de desviación estándar, o acumulaciones complejas con estado.
-
-```csharp
-// Aggregate: Concatenar nombres con coma
-var nombresConcat = productos
-    .Select(p => p.Nombre)
-    .Aggregate((acc, nombre) => acc + ", " + nombre);
-
-// Aggregate con valor semilla
-var totalConIVA = productos
-    .Aggregate(0m, (total, p) => total + p.Precio * 1.16m);
-
-// Aggregate con semilla y selector de resultado
-var stats = productos.Aggregate(
-    new { Min = decimal.MaxValue, Max = 0m, Total = 0m, Count = 0 },
-    (acc, p) => new {
-        Min = Math.Min(acc.Min, p.Precio),
-        Max = Math.Max(acc.Max, p.Precio),
-        Total = acc.Total + p.Precio,
-        Count = acc.Count + 1
-    },
-    result => new {
-        result.Min,
-        result.Max,
-        Promedio = result.Total / result.Count
-    });
-
-// Aggregate: Cálculo de desviación estándar
-var desvStd = ventas.Select(v => (double)v.Monto)
-    .Aggregate(
-        new { Sum = 0.0, SumSq = 0.0, Count = 0 },
-        (acc, val) => new {
-            Sum = acc.Sum + val,
-            SumSq = acc.SumSq + val * val,
-            Count = acc.Count + 1
-        },
-        r => Math.Sqrt(r.SumSq / r.Count - Math.Pow(r.Sum / r.Count, 2)));
-```
-
-> 💡 **Tip:** `Aggregate` puede reemplazar bucles `foreach` con acumuladores. Sin embargo, para operaciones simples como suma o concatenación, prefiere `Sum` o `string.Join()` que son más legibles.
-
----
-
-# 05 — Elementos y Cuantificación
-
-Los operadores de elementos retornan un elemento específico de la secuencia, mientras que los operadores de cuantificación evalúan condiciones sobre la colección y retornan un valor booleano. Los operadores de elementos son de ejecución inmediata y pueden lanzar excepciones si no encuentran el elemento buscado (versión sin `OrDefault`), o retornar el valor por defecto del tipo (versión con `OrDefault`). Los operadores de cuantificación son extremadamente útiles para validaciones en la capa de negocio.
-
-## First / FirstOrDefault / Last / LastOrDefault
-
-```csharp
-// First: Primer elemento (lanza excepción si está vacía)
-var primerProducto = productos.First();
-
-// First con condición
-var primerCaro = productos.First(p => p.Precio > 500);
-
-// FirstOrDefault: Retorna null si no encuentra
-var primerElectronica = productos.FirstOrDefault(p =>
-    p.Categoria == "Electronica");  // null si no existe
-
-// Last / LastOrDefault
-var ultimoEmpleado = empleados.Last();
-var ultimoConAltoSalario = empleados
-    .LastOrDefault(e => e.Salario > 5000);
-```
-
-## Single / SingleOrDefault
-
-`Single` retorna el único elemento de la secuencia y lanza excepción si hay más de uno o ninguno. `SingleOrDefault` retorna `default` si no hay elementos. Son ideales para validaciones donde esperas exactamente un resultado.
-
-```csharp
-// Single: Exactamente un elemento
-var producto = productos.Single(p => p.Id == 5);
-
-// SingleOrDefault: Uno o ninguno
-var admin = usuarios.SingleOrDefault(u => u.Rol == "Admin");
-```
-
-> ⚠️ **Precaución:** `Single` lanza `InvalidOperationException` si la secuencia tiene más de un elemento. Úsalo solo cuando estés seguro de que debe haber exactamente uno.
-
-## Any / All / Contains
-
-```csharp
-// Any: ¿Hay algún elemento?
-bool hayProductos = productos.Any();
-
-// Any con condición: ¿Hay productos caros?
-bool hayCaros = productos.Any(p => p.Precio > 1000);
-
-// All: ¿Todos cumplen la condición?
-bool todosActivos = productos.All(p => p.Activo);
-
-// Contains: ¿Contiene el elemento?
-bool existe = productos.Contains(productoEspecifico);
-
-// Contains con comparer personalizado
-bool existeNombre = nombres.Select(n => n.ToUpper())
-    .Contains("LAPTOP HP");
-```
-
-### Tabla resumen — Elementos y Cuantificación
-
-| Operador | Retorna | Si no existe | Ejecución |
-|----------|---------|-------------|-----------|
-| `First` | `T` | Excepción | Inmediata |
-| `FirstOrDefault` | `T?` | `default/null` | Inmediata |
-| `Last` | `T` | Excepción | Inmediata |
-| `LastOrDefault` | `T?` | `default/null` | Inmediata |
-| `Single` | `T` | Excepción | Inmediata |
-| `SingleOrDefault` | `T?` | `default/null` | Inmediata |
-| `Any` | `bool` | `false` | Inmediata |
-| `All` | `bool` | `true` (vacía) | Inmediata |
-| `Contains` | `bool` | `false` | Inmediata |
-
----
-
-# 06 — Partición y Conjuntos
-
-Los operadores de partición dividen una secuencia en partes sin reordenar los elementos, mientras que los operadores de conjuntos realizan operaciones de teoría de conjuntos sobre dos secuencias. Los operadores de partición son fundamentales para implementar paginación en aplicaciones con grandes volúmenes de datos, especialmente en la capa de presentación donde se muestran resultados página por página.
-
-## Take / Skip / TakeWhile / SkipWhile
-
-```csharp
-// Take: Primeros N elementos
-var top5 = productos.OrderByDescending(p => p.Precio).Take(5);
-
-// Skip: Saltar N elementos
-var sinPrimeros3 = productos.Skip(3);
-
-// Paginación: Take + Skip
-int pagina = 2, tamaño = 10;
-var pagina2 = productos
-    .Skip((pagina - 1) * tamaño)
-    .Take(tamaño);
-
-// TakeWhile: Tomar mientras se cumpla la condición
-var hastaCien = productos.OrderBy(p => p.Precio)
-    .TakeWhile(p => p.Precio < 100);
-
-// SkipWhile: Saltar mientras se cumpla
-var despuesDeBaratos = productos.OrderBy(p => p.Precio)
-    .SkipWhile(p => p.Precio < 50);
-```
-
-## Distinct / Union / Intersect / Except
-
-```csharp
-// Distinct: Eliminar duplicados
-var categorias = productos.Select(p => p.Categoria).Distinct();
-
-// Distinct con comparador personalizado
-var unicos = productos.DistinctBy(p => p.Categoria);
-
-// Union: Combinar sin duplicados
-var todos = listaA.Union(listaB);
-
-// Intersect: Elementos en común
-var comunes = listaA.Intersect(listaB);
-
-// Except: Elementos en A pero no en B
-var soloEnA = listaA.Except(listaB);
-```
-
----
-
-# 07 — Conversión y Generación
-
-Los operadores de conversión transforman una secuencia en un tipo de colección específico, forzando la ejecución inmediata de la consulta. Los operadores de generación crean nuevas secuencias a partir de parámetros, sin necesidad de una colección fuente. En una arquitectura de 4 capas, los operadores de conversión se usan frecuentemente para materializar resultados antes de transferirlos entre capas, mientras que los de generación son útiles para crear datos de prueba y testing.
-
-## ToArray / ToList / ToDictionary / ToLookup
-
-```csharp
-// ToList: Materializar en List<T>
-List<Producto> lista = productos.Where(p => p.Activo).ToList();
-
-// ToArray: Materializar en array
-Producto[] array = productos.OrderBy(p => p.Precio).ToArray();
-
-// ToDictionary: Clave-valor (clave única)
-var dict = productos.ToDictionary(p => p.Id, p => p.Nombre);
-
-// ToDictionary con selector de elemento completo
-var dictCompleto = productos.ToDictionary(p => p.Id);
-
-// ToHashSet: Conjunto sin duplicados
-var hashSet = productos.Select(p => p.Categoria).ToHashSet();
-```
-
-## Range / Repeat / Empty
-
-```csharp
-// Range: Generar secuencia de números
-var numeros = Enumerable.Range(1, 100);  // 1, 2, 3, ..., 100
-
-// Range para generar años
-var años = Enumerable.Range(2020, 7)  // 2020-2026
-    .Select(a => new { Año = a, EsBisiesto = DateTime.IsLeapYear(a) });
-
-// Repeat: Repetir un valor
-var ceros = Enumerable.Repeat(0, 10);  // [0,0,0,0,0,0,0,0,0,0]
-
-// Empty: Secuencia vacía tipada
-var vacio = Enumerable.Empty<Producto>();
-```
-
-> 💡 **Tip:** Usa `ToList()` o `ToArray()` para materializar consultas antes de iterar múltiples veces o antes de transferir datos entre capas. Una consulta diferida se ejecuta cada vez que se itera.
-
----
-
-# 08 — Sintaxis de Consulta (Query Syntax)
-
-La sintaxis de consulta (Query Syntax) es una alternativa declarativa a la sintaxis de métodos (Method Syntax) que se asemeja más a SQL. Ambas sintaxis son equivalentes y se compilan al mismo IL, pero la Query Syntax es más legible para consultas complejas con joins, agrupamientos y proyecciones. En una arquitectura de 4 capas, la Query Syntax puede hacer las consultas más fáciles de revisar y mantener en la Capa de Acceso a Datos.
-
-## from / where / select / orderby
-
-```csharp
-// Query Syntax básica
-var caros = from p in productos
-            where p.Precio > 100
-            orderby p.Precio descending
-            select p;
-
-// Proyección con tipo anónimo
-var resumen = from p in productos
-              where p.Stock > 0
-              orderby p.Categoria, p.Precio
-              select new {
-                  p.Nombre,
-                  p.Categoria,
-                  Total = p.Precio * p.Stock
-              };
-```
-
-## join / group / let / into
-
-```csharp
-// join en Query Syntax
-var conCategoria = from p in productos
-                   join c in categorias on p.CategoriaId equals c.Id
-                   select new { p.Nombre, Categoria = c.Nombre };
-
-// group en Query Syntax
-var porCategoria = from p in productos
-                   group p by p.Categoria into grupo
-                   select new {
-                       Categoria = grupo.Key,
-                       Cantidad = grupo.Count(),
-                       Total = grupo.Sum(p => p.Precio)
-                   };
-
-// let para variables intermedias
-var conDescuento = from p in productos
-                   let precioConIVA = p.Precio * 1.16m
-                   let descuento = precioConIVA > 500 ? 0.10m : 0.05m
-                   select new {
-                       p.Nombre,
-                       PrecioFinal = precioConIVA * (1 - descuento)
-                   };
-
-// into para continuaciones
-var grupos = from p in productos
-             group p by p.Categoria into g
-             where g.Count() > 2
-             select new { Categoria = g.Key, Total = g.Count() };
-```
-
----
-
-# 09 — LINQ to Objects
-
-LINQ to Objects es el proveedor más fundamental de LINQ, que permite consultar cualquier colección en memoria que implemente `IEnumerable<T>`. Esto incluye `List<T>`, arrays, `Dictionary<TKey,TValue>`, strings, y cualquier colección personalizada. A diferencia de LINQ to SQL o EF Core, LINQ to Objects ejecuta todas las operaciones en memoria sin traducir a SQL, lo que lo hace ideal para datos ya cargados o para lógica de negocio pura.
-
-## Consultas sobre List<T> y Arrays
-
-```csharp
-// Filtrar lista de productos
-var activos = productos.Where(p => p.Activo).ToList();
-
-// Buscar en array
-int[] numeros = { 5, 12, 3, 28, 7, 15, 42, 9 };
-var mayores10 = numeros.Where(n => n > 10).OrderBy(n => n);
-// Resultado: 12, 15, 28, 42
-
-// Operaciones sobre strings
-string texto = "LINQ es poderoso y flexible";
-var palabras = texto.Split(' ')
-    .Where(p => p.Length > 3)
-    .OrderBy(p => p.Length);
-// Resultado: "LINQ", "poderoso", "flexible"
-
-// LINQ con Dictionary
-var dict = new Dictionary<string, decimal> {
-    ["Laptop"] = 1200m, ["Mouse"] = 35m, ["Monitor"] = 450m
-};
-var caros = dict.Where(kvp => kvp.Value > 100)
-    .Select(kvp => $"{kvp.Key}: ${kvp.Value}");
-```
-
-## SelectMany con colecciones anidadas
-
-```csharp
-// Obtener todos los pedidos de todos los clientes
-var todosPedidos = clientes.SelectMany(c => c.Pedidos);
-
-// Con proyección
-var detalle = clientes.SelectMany(
-    c => c.Pedidos,
-    (cliente, pedido) => new {
-        Cliente = cliente.Nombre,
-        pedido.Numero,
-        pedido.Total
-    });
-```
-
----
-
-# 10 — LINQ to XML
-
-LINQ to XML es un proveedor que permite crear, consultar y modificar documentos XML usando la misma sintaxis LINQ que se usa para colecciones en memoria. Utiliza las clases `XDocument`, `XElement`, `XAttribute` del namespace `System.Xml.Linq`, que proporcionan un modelo de programación más simple y funcional que el DOM tradicional. En una arquitectura de 4 capas, LINQ to XML se usa frecuentemente en la capa de integración para consumir o generar servicios XML.
-
-## Crear y consultar XML
-
-```csharp
-// Crear documento XML con LINQ
+// Crear documento XML
 var doc = new XDocument(
     new XElement("Productos",
         from p in productos
@@ -932,185 +180,1428 @@ doc.Descendants("Producto")
     .ToList()
     .ForEach(p => p.Element("Precio")?.SetValue(
         (decimal)p.Element("Precio") * 0.9m));
+
+// Guardar a archivo
+doc.Save("productos.xml");
+```
+
+### LINQ to JSON — System.Text.Json
+
+```csharp
+using System.Text.Json.Nodes;
+
+// Parsear JSON
+string json = """{"productos": [{"nombre": "Laptop", "precio": 1200}, {"nombre": "Mouse", "precio": 35}]}""";
+var nodo = JsonNode.Parse(json);
+
+// Consultar con LINQ
+var caros = nodo!["productos"]!.AsArray()
+    .Where(p => (decimal)p!["precio"]! > 100)
+    .Select(p => new {
+        Nombre = (string)p!["nombre"]!,
+        Precio = (decimal)p!["precio"]!
+    });
+
+// Crear JSON con LINQ
+var jsonResult = new JsonObject {
+    ["resumen"] = new JsonObject {
+        ["total"] = productos.Count(),
+        ["valorInventario"] = productos.Sum(p => p.Precio * p.Stock),
+        ["categorias"] = new JsonArray(
+            productos
+                .GroupBy(p => p.Categoria)
+                .Select(g => (JsonNode)new JsonObject {
+                    ["nombre"] = g.Key,
+                    ["cantidad"] = g.Count(),
+                    ["promedio"] = g.Average(p => p.Precio)
+                })
+                .ToArray()
+        )
+    }
+};
+Console.WriteLine(jsonResult.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+```
+
+### PLINQ — LINQ Paralelo
+
+```csharp
+// Procesa en paralelo usando todos los nucleos del CPU
+var resultado = datos.AsParallel()
+    .Where(x => x.EsValido())
+    .Select(x => x.Procesar())
+    .ToList();
+
+// Mantener orden original
+var ordenado = datos.AsParallel().AsOrdered()
+    .Where(x => x.Valor > 100)
+    .Select(x => x.Transformar())
+    .ToList();
+
+// Con cancelacion
+var cts = new CancellationTokenSource();
+var cancelable = datos.AsParallel()
+    .WithCancellation(cts.Token)
+    .WithDegreeOfParallelism(4)
+    .Select(x => Procesar(x));
+
+// ForAll: ejecutar sin recolectar resultados
+datos.AsParallel()
+    .Where(p => p.Stock < 10)
+    .ForAll(p => EnviarAlerta(p));
 ```
 
 ---
 
-# 11 — Expresiones Lambda y Árboles de Expresión
+## 3. Sintaxis: Query vs Method
 
-Las expresiones lambda son funciones anónimas que se usan extensamente en LINQ como argumentos de operadores de consulta. Los árboles de expresión (`Expression<T>`) representan código como una estructura de datos que puede ser analizada, modificada y traducida en tiempo de ejecución, lo cual es la base sobre la que Entity Framework traduce consultas LINQ a SQL Server.
+LINQ tiene **dos sintaxis equivalentes** — ambas compilan al mismo IL y producen resultados identicos. La sintaxis de metodo (fluent) es mas flexible y cubre todos los operadores, mientras que la sintaxis de query es mas legible para joins y agrupamientos complejos.
 
-## Func y Action
+### Sintaxis de Query (SQL-like)
 
 ```csharp
-// Func<T, TResult>: Delegado genérico con retorno
+var consulta = from p in productos
+               where p.Precio > 100 && p.Stock > 0
+               orderby p.Categoria, p.Precio descending
+               select new { p.Nombre, p.Precio, p.Categoria };
+```
+
+### Sintaxis de Metodo (Fluent / Lambda)
+
+```csharp
+var consulta = productos
+    .Where(p => p.Precio > 100 && p.Stock > 0)
+    .OrderBy(p => p.Categoria)
+    .ThenByDescending(p => p.Precio)
+    .Select(p => new { p.Nombre, p.Precio, p.Categoria });
+```
+
+### Comparativa Completa
+
+| Operacion | Query Syntax | Method Syntax | Preferida |
+|-----------|-------------|---------------|-----------|
+| Filtrar | `where p.Activo` | `.Where(p => p.Activo)` | Method |
+| Ordenar | `orderby p.Nombre` | `.OrderBy(p => p.Nombre)` | Method |
+| Proyectar | `select p.Nombre` | `.Select(p => p.Nombre)` | Method |
+| Unir | `join c in clientes on p.Id equals c.Id` | `.Join(clientes, ...)` | Query |
+| Agrupar | `group p by p.Categoria into g` | `.GroupBy(p => p.Categoria)` | Query |
+| Variable | `let total = p.Precio * p.Stock` | No directo (usar Select anidado) | Query |
+| Distinct | No disponible | `.Distinct()` | Method |
+| Take/Skip | No disponible | `.Take(5).Skip(10)` | Method |
+| Paginacion | No disponible | `.Skip(n).Take(m)` | Method |
+
+> **Recomendacion:** Usa **Method Syntax** como predeterminada — es mas flexible, cubre todos los operadores, y es mas facil de encadenar. Usa **Query Syntax** solo para joins complejos y agrupamientos donde la legibilidad mejore notablemente.
+
+### let en Query Syntax — Variables Intermedias
+
+```csharp
+// Query Syntax con let — mas legible
+var conDescuento = from p in productos
+                   let precioIVA = p.Precio * 1.16m
+                   let descuento = precioIVA > 500 ? 0.10m : 0.05m
+                   let precioFinal = precioIVA * (1 - descuento)
+                   where precioFinal > 50
+                   orderby precioFinal descending
+                   select new {
+                       p.Nombre,
+                       PrecioBase = p.Precio,
+                       ConIVA = precioIVA,
+                       Descuento = descuento * 100 + "%",
+                       PrecioFinal = precioFinal
+                   };
+
+// Equivalente en Method Syntax — mas verboso
+var conDescuento2 = productos
+    .Select(p => new { p, precioIVA = p.Precio * 1.16m })
+    .Select(x => new { x.p, x.precioIVA, descuento = x.precioIVA > 500 ? 0.10m : 0.05m })
+    .Select(x => new { x.p, x.precioIVA, x.descuento, precioFinal = x.precioIVA * (1 - x.descuento) })
+    .Where(x => x.precioFinal > 50)
+    .OrderByDescending(x => x.precioFinal)
+    .Select(x => new {
+        x.p.Nombre,
+        PrecioBase = x.p.Precio,
+        ConIVA = x.precioIVA,
+        Descuento = x.descuento * 100 + "%",
+        PrecioFinal = x.precioFinal
+    });
+```
+
+---
+
+## 4. Operadores Estandar
+
+### 4.1 Filtrado
+
+```csharp
+var lista = new List<Producto> { /* ... */ };
+
+// Where — filtro basico
+var caros = lista.Where(p => p.Precio > 500);
+
+// Where con condiciones multiples
+var filtroCompuesto = lista.Where(p =>
+    p.Activo && p.Stock > 0 && p.Categoria == "Electronica");
+
+// Where con indice (segundo parametro = posicion del elemento)
+var primeros5Caros = lista
+    .Where((p, index) => p.Precio > 100 && index < 10);
+
+// Where con operador OR
+var busquedaMultiple = lista.Where(p =>
+    p.Nombre.Contains("Laptop") || p.Nombre.Contains("PC"));
+
+// OfType — filtra por tipo en colecciones heterogeneas
+object[] mixta = { 1, "hola", 3.14, 42, true, "mundo", 7 };
+var enteros = mixta.OfType<int>();      // 1, 42, 7
+var cadenas = mixta.OfType<string>();    // "hola", "mundo"
+```
+
+### 4.2 Proyeccion
+
+```csharp
+// Select — transforma cada elemento
+var nombres = lista.Select(p => p.Nombre);
+
+// Select con tipo anonimo
+var catalogo = lista.Select(p => new {
+    p.Id,
+    p.Nombre,
+    PrecioFormateado = $"${p.Precio:N2}",
+    Disponibilidad = p.Stock > 10 ? "Suficiente" : "Poco stock"
+});
+
+// Select con indice
+var conIndice = lista.Select((p, i) =>
+    $"#{i + 1} {p.Nombre} - ${p.Precio:F2}");
+
+// Select a tipo concreto (DTO)
+var dtos = lista.Select(p => new ProductoDTO {
+    Id = p.Id,
+    Nombre = p.Nombre,
+    PrecioConIVA = p.Precio * 1.16m,
+    Estado = p.Stock > 20 ? "Disponible" :
+             p.Stock > 0  ? "Bajo Stock" : "Agotado"
+}).ToList();
+
+// SelectMany — aplana colecciones anidadas
+var todasEtiquetas = productos.SelectMany(p => p.Etiquetas);
+
+// SelectMany con resultado tipado
+var productosConTags = productos
+    .SelectMany(p => p.Etiquetas, (producto, tag) => new {
+        Producto = producto.Nombre,
+        Tag = tag
+    });
+
+// SelectMany: pedidos de todos los clientes
+var todosLosPedidos = clientes
+    .SelectMany(c => c.Pedidos)
+    .Where(p => p.Total > 1000)
+    .OrderByDescending(p => p.Total);
+```
+
+### 4.3 Ordenamiento
+
+```csharp
+// Orden ascendente
+var porNombre = lista.OrderBy(p => p.Nombre);
+
+// Orden descendente
+var porPrecioDesc = lista.OrderByDescending(p => p.Precio);
+
+// Orden multiple (equivalente a ORDER BY Dept, Salario DESC, Nombre)
+var multiOrden = lista
+    .OrderBy(p => p.Categoria)
+    .ThenBy(p => p.Nombre)
+    .ThenByDescending(p => p.Precio);
+
+// Ordenamiento con condicion personalizada
+var porPrioridad = tareas
+    .OrderBy(t => t.Prioridad == "Alta" ? 0 :
+                  t.Prioridad == "Media" ? 1 : 2)
+    .ThenBy(t => t.FechaLimite);
+
+// Invertir orden
+var invertido = lista.Reverse();
+
+// Ordenar por propiedad en runtime (reflection)
+var ordenDinamico = lista.OrderBy(p =>
+    (string)typeof(Producto).GetProperty("Nombre")!.GetValue(p)!);
+```
+
+> **Error comun:** No uses `OrderBy` encadenados para multiples campos. Cada `OrderBy` **resetea** el ordenamiento. Usa `ThenBy` despues del primer `OrderBy`.
+
+### 4.4 Agrupacion
+
+```csharp
+// GroupBy — agrupa elementos por clave
+var porCategoria = lista.GroupBy(p => p.Categoria);
+
+foreach (var grupo in porCategoria)
+{
+    Console.WriteLine($"Categoria: {grupo.Key} ({grupo.Count()} productos)");
+    foreach (var p in grupo)
+        Console.WriteLine($"  - {p.Nombre}: ${p.Precio}");
+}
+
+// GroupBy con proyeccion — estadisticas por grupo
+var resumen = lista
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        Total = g.Count(),
+        PrecioPromedio = g.Average(p => p.Precio),
+        PrecioMinimo = g.Min(p => p.Precio),
+        PrecioMaximo = g.Max(p => p.Precio),
+        StockTotal = g.Sum(p => p.Stock),
+        ValorInventario = g.Sum(p => p.Precio * p.Stock)
+    })
+    .OrderByDescending(x => x.ValorInventario);
+
+// GroupBy con clave compuesta
+var porCategoriaRango = lista.GroupBy(p => new {
+    p.Categoria,
+    Rango = p.Precio >= 500 ? "Premium" : "Estandar"
+});
+
+// GroupBy con proyeccion de elementos
+var nombresPorCategoria = lista
+    .GroupBy(p => p.Categoria, p => p.Nombre);
+
+// ToLookup — agrupacion inmediata (materializada)
+var lookup = lista.ToLookup(p => p.Categoria);
+if (lookup.Contains("Electronica"))
+{
+    var electronics = lookup["Electronica"]; // O(1) acceso
+}
+```
+
+### 4.5 Joins (Uniones)
+
+```csharp
+var clientes = new List<Cliente> { /* ... */ };
+var pedidos  = new List<Pedido>  { /* ... */ };
+
+// ── Inner Join ──
+var resultado = clientes.Join(
+    pedidos,
+    c => c.Id,           // clave de clientes
+    p => p.ClienteId,    // clave de pedidos
+    (c, p) => new {      // resultado
+        Cliente = c.Nombre,
+        Pedido  = p.Numero,
+        Total   = p.Total
+    });
+
+// Inner Join con Query Syntax
+var innerJoin = from c in clientes
+                join p in pedidos on c.Id equals p.ClienteId
+                select new { c.Nombre, p.Numero, p.Total };
+
+// ── Left Join (GroupJoin + DefaultIfEmpty) ──
+var leftJoin = clientes.GroupJoin(
+    pedidos,
+    c => c.Id,
+    p => p.ClienteId,
+    (c, pedidosCliente) => new {
+        Cliente = c.Nombre,
+        Pedidos = pedidosCliente.DefaultIfEmpty()
+    });
+
+// Left Join con Query Syntax
+var leftJoinQ = from c in clientes
+                join p in pedidos on c.Id equals p.ClienteId into gp
+                from p in gp.DefaultIfEmpty()
+                select new {
+                    Cliente = c.Nombre,
+                    Pedido = p != null ? p.Numero : "SIN PEDIDO",
+                    Total  = p != null ? p.Total : 0
+                };
+
+// ── Cross Join ──
+var combinaciones = from c in colores
+                    from t in tallas
+                    select new { Color = c, Talla = t };
+
+// ── Join con clave compuesta ──
+var compuesto = ordenes.Join(
+    clientes,
+    o => new { o.ClienteId, o.Sucursal },
+    c => new { c.Id, c.Sucursal },
+    (o, c) => new { o.Numero, c.Nombre, o.Total });
+
+// ── Zip — combinar por posicion ──
+var nombres = new[] { "Ana", "Carlos", "Maria" };
+var salarios = new[] { 3500m, 4200m, 5500m };
+var combinados = nombres.Zip(salarios, (nombre, salario) =>
+    $"{nombre} gana ${salario:F2}");
+```
+
+### 4.6 Paginacion
+
+```csharp
+int pagina = 2;
+int tamanoPagina = 10;
+
+var paginado = lista
+    .OrderBy(p => p.Nombre)         // SIEMPRE ordenar antes de paginar
+    .Skip((pagina - 1) * tamanoPagina)
+    .Take(tamanoPagina)
+    .ToList();
+
+// TakeWhile / SkipWhile
+var hastaCien = lista.OrderBy(p => p.Precio)
+    .TakeWhile(p => p.Precio < 100);
+
+var despuesBaratos = lista.OrderBy(p => p.Precio)
+    .SkipWhile(p => p.Precio < 50);
+```
+
+### 4.7 Conjuntos
+
+```csharp
+var a = new[] { 1, 2, 3, 4, 5 };
+var b = new[] { 3, 4, 5, 6, 7 };
+
+var union        = a.Union(b);        // [1,2,3,4,5,6,7] — sin duplicados
+var interseccion = a.Intersect(b);    // [3,4,5]
+var diferencia   = a.Except(b);       // [1,2]
+var distintos    = a.Distinct();      // elimina duplicados
+var concat       = a.Concat(b);       // [1,2,3,4,5,3,4,5,6,7] — con duplicados
+
+// DistinctBy — por propiedad (.NET 6+)
+var porCategoria = productos.DistinctBy(p => p.Categoria);
+
+// UnionBy — por propiedad (.NET 6+)
+var unionPorNombre = listaA.UnionBy(listaB, p => p.Nombre);
+
+// IntersectBy / ExceptBy — con selector de clave (.NET 6+)
+var idsComunes = listaA.Select(p => p.Id).IntersectBy(listaB.Select(p => p.Id), id => id);
+
+// Con IEqualityComparer personalizado
+var sinDuplicadosNombre = productos.DistinctBy(p => p.Nombre, StringComparer.OrdinalIgnoreCase);
+```
+
+### 4.8 Elementos Individuales
+
+```csharp
+// Primer elemento (lanza excepcion si vacio)
+var primero = lista.First();
+var primerActivo = lista.First(p => p.Activo);
+
+// Primer elemento o null
+var primeroONull = lista.FirstOrDefault();
+var primeroONull2 = lista.FirstOrDefault(p => p.Precio > 1000);
+
+// Ultimo elemento
+var ultimo = lista.Last();
+var ultimoONull = lista.LastOrDefault();
+
+// Elemento unico (lanza si hay mas de uno o ninguno)
+var unico = lista.Single(p => p.Id == 42);
+var unicoONull = lista.SingleOrDefault(p => p.Id == 42);
+
+// Por indice
+var tercero = lista.ElementAt(2);
+var terceroONull = lista.ElementAtOrDefault(200); // null si fuera de rango
+```
+
+### 4.9 Cuantificadores y Verificadores
+
+```csharp
+bool hayAlguno   = lista.Any();                         // ¿tiene elementos?
+bool hayCaros    = lista.Any(p => p.Precio > 1000);     // ¿alguno cumple?
+bool todosActivos = lista.All(p => p.Activo);           // ¿todos cumplen?
+bool tieneId5    = lista.Contains(productoX);           // ¿contiene el objeto?
+int  cantidad    = lista.Count();                       // total de elementos
+int  cantCaros   = lista.Count(p => p.Precio > 500);    // total que cumplen
+long cantLarga   = lista.LongCount();                   // para colecciones grandes
+
+// Contains con comparer
+bool existeNombre = nombres.Select(n => n.ToUpper())
+    .Contains("LAPTOP HP", StringComparer.OrdinalIgnoreCase);
+
+// TryGetNonEnumeratedCount — evita iterar (.NET 6+)
+if (lista.TryGetNonEnumeratedCount(out int count))
+    Console.WriteLine($"Total: {count} (sin iterar)");
+```
+
+### 4.10 Conversion y Generacion
+
+```csharp
+// ToList / ToArray — materializar
+List<Producto> listaM = productos.Where(p => p.Activo).ToList();
+Producto[] array = productos.OrderBy(p => p.Precio).ToArray();
+
+// ToDictionary — clave-valor (clave unica)
+var dict = productos.ToDictionary(p => p.Id, p => p.Nombre);
+var dictCompleto = productos.ToDictionary(p => p.Id);
+
+// ToHashSet — conjunto sin duplicados
+var hashSet = productos.Select(p => p.Categoria).ToHashSet();
+
+// AsEnumerable — forzar evaluacion en cliente
+var enCliente = ctx.Productos.AsEnumerable().Where(p => MiFiltro(p));
+
+// AsQueryable — mantener evaluacion en servidor
+var enServidor = lista.AsQueryable().Where(p => p.Precio > 100);
+
+// Range — generar secuencia de numeros
+var numeros = Enumerable.Range(1, 100);  // 1, 2, 3, ..., 100
+var anos = Enumerable.Range(2020, 7)     // 2020-2026
+    .Select(a => new { Ano = a, EsBisiesto = DateTime.IsLeapYear(a) });
+
+// Repeat — repetir un valor
+var ceros = Enumerable.Repeat(0, 10);    // [0,0,0,0,0,0,0,0,0,0]
+
+// Empty — secuencia vacia tipada
+var vacio = Enumerable.Empty<Producto>();
+
+// Chunk — dividir en lotes (.NET 6+)
+var lotes = Enumerable.Range(1, 100).Chunk(10); // 10 lotes de 10 elementos
+```
+
+### Tabla Resumen — Todos los Operadores
+
+| Categoria | Operadores | Ejecucion |
+|-----------|-----------|-----------|
+| Filtrado | `Where`, `OfType` | Diferida |
+| Proyeccion | `Select`, `SelectMany` | Diferida |
+| Ordenamiento | `OrderBy`, `OrderByDescending`, `ThenBy`, `ThenByDescending`, `Reverse` | Diferida |
+| Agrupacion | `GroupBy`, `ToLookup` | Diferida / Inmediata |
+| Join | `Join`, `GroupJoin`, `Zip` | Diferida |
+| Agregado | `Count`, `LongCount`, `Sum`, `Min`, `Max`, `Average`, `Aggregate`, `MinBy`, `MaxBy` | Inmediata |
+| Elementos | `First`, `FirstOrDefault`, `Last`, `LastOrDefault`, `Single`, `SingleOrDefault`, `ElementAt`, `ElementAtOrDefault` | Inmediata |
+| Cuantificacion | `Any`, `All`, `Contains` | Inmediata |
+| Particion | `Take`, `Skip`, `TakeWhile`, `SkipWhile` | Diferida |
+| Conjuntos | `Distinct`, `DistinctBy`, `Union`, `UnionBy`, `Intersect`, `IntersectBy`, `Except`, `ExceptBy`, `Concat` | Diferida |
+| Conversion | `ToArray`, `ToList`, `ToDictionary`, `ToLookup`, `ToHashSet`, `AsEnumerable`, `AsQueryable`, `Cast` | Inmediata |
+| Generacion | `Range`, `Repeat`, `Empty`, `Chunk`, `DefaultIfEmpty` | Inmediata |
+
+---
+
+## 5. Funciones de Agregado — Guia Completa
+
+Las funciones de agregado **reducen una coleccion a un unico valor**. Son esenciales para generar reportes, estadisticas y dashboard en cualquier aplicacion empresarial. En la arquitectura de 4 capas, las funciones de agregado se utilizan intensivamente en la **Capa de Logica de Negocio (BLL)** para calcular metricas que luego se presentan al usuario, y en la **Capa de Repositorio (DAL)** para consultas optimizadas que se traducen a SQL.
+
+### 5.1 Count y LongCount — Contar
+
+```csharp
+var ventas = new List<Venta> { /* ... */ };
+
+// Contar todos los elementos
+int total = ventas.Count();
+
+// Contar con condicion
+int ventasGrandes = ventas.Count(v => v.Monto > 10_000);
+
+// LongCount para colecciones muy grandes (> 2 mil millones)
+long totalGrande = datosGrandes.LongCount();
+
+// Contar en GroupBy — ventas por vendedor
+var ventasPorVendedor = ventas
+    .GroupBy(v => v.VendedorId)
+    .Select(g => new {
+        VendedorId = g.Key,
+        TotalVentas = g.Count(),
+        VentasGrandes = g.Count(v => v.Monto > 5000)
+    })
+    .OrderByDescending(x => x.TotalVentas);
+
+// Count en repositorio (DAL)
+public async Task<int> ContarActivosAsync() =>
+    await _ctx.Productos.CountAsync(p => p.Activo);
+```
+
+### 5.2 Sum — Sumar
+
+```csharp
+// Suma simple
+decimal totalIngresos = ventas.Sum(v => v.Monto);
+
+// Suma condicional — ingresos del mes actual
+decimal ingresosMes = ventas
+    .Where(v => v.Fecha.Month == DateTime.Now.Month
+             && v.Fecha.Year == DateTime.Now.Year)
+    .Sum(v => v.Monto);
+
+// Suma agrupada por mes
+var ingresosPorMes = ventas
+    .GroupBy(v => new { v.Fecha.Year, v.Fecha.Month })
+    .Select(g => new {
+        Ano = g.Key.Year,
+        Mes = g.Key.Month,
+        Total = g.Sum(v => v.Monto),
+        Cantidad = g.Count(),
+        Promedio = g.Average(v => v.Monto)
+    })
+    .OrderBy(x => x.Ano).ThenBy(x => x.Mes);
+
+// Suma con calculo compuesto
+decimal valorInventario = productos.Sum(p => p.Precio * p.Stock);
+
+// Suma en EF Core (se traduce a SUM en SQL)
+var totalBD = await _ctx.Ventas
+    .Where(v => v.Fecha.Year == 2024)
+    .SumAsync(v => v.Monto);
+
+// Suma por categoria — con GroupBy
+var inventarioPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        ValorTotal = g.Sum(p => p.Precio * p.Stock),
+        StockTotal = g.Sum(p => p.Stock),
+        Cantidad = g.Count()
+    })
+    .OrderByDescending(x => x.ValorTotal);
+```
+
+### 5.3 Average — Promedio
+
+```csharp
+// Promedio simple
+double promedioPrecio = productos.Average(p => (double)p.Precio);
+
+// Promedio por categoria
+var promedioPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        Promedio = g.Average(p => p.Precio),
+        CantidadProductos = g.Count(),
+        Mediana = g.OrderBy(p => p.Precio)
+                   .Skip(g.Count() / 2)
+                   .FirstOrDefault().Precio
+    });
+
+// Promedio ponderado
+var promedioPonderado = ventas
+    .GroupBy(v => v.ProductoId)
+    .Select(g => new {
+        ProductoId = g.Key,
+        PromedioPonderado = g.Sum(v => v.Monto * v.Cantidad)
+                          / g.Sum(v => v.Cantidad)
+    });
+
+// Promedio en EF Core
+var avgBD = await _ctx.Productos
+    .Where(p => p.Activo)
+    .AverageAsync(p => p.Precio);
+```
+
+### 5.4 Min y Max — Minimo y Maximo
+
+```csharp
+// Valores extremos simples
+decimal precioMin = productos.Min(p => p.Precio);
+decimal precioMax = productos.Max(p => p.Precio);
+
+// Obtener el OBJETO con el precio minimo/maximo (.NET 6+)
+var masBarato  = productos.MinBy(p => p.Precio);
+var masCaro    = productos.MaxBy(p => p.Precio);
+
+// Compatibilidad .NET 5 y anteriores
+var masCaro5 = productos
+    .OrderByDescending(p => p.Precio)
+    .FirstOrDefault();
+
+// Min/Max por grupo
+var extremosPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        MasBarato = g.Min(p => p.Precio),
+        MasCaro   = g.Max(p => p.Precio),
+        Rango     = g.Max(p => p.Precio) - g.Min(p => p.Precio),
+        ProductoBarato = g.OrderBy(p => p.Precio).First().Nombre,
+        ProductoCaro   = g.OrderByDescending(p => p.Precio).First().Nombre
+    });
+
+// Min/Max con fechas
+var fechaMin = ventas.Min(v => v.Fecha);
+var fechaMax = ventas.Max(v => v.Fecha);
+var antiguedad = DateTime.Now - fechaMin;
+
+// Min/Max en EF Core
+var precioMinBD = await _ctx.Productos.MinAsync(p => p.Precio);
+var precioMaxBD = await _ctx.Productos.MaxAsync(p => p.Precio);
+```
+
+### 5.5 Aggregate — Reduccion Personalizada
+
+`Aggregate` es el operador de agregado mas poderoso y flexible. Aplica una funcion acumuladora sobre la secuencia y produce un resultado final. Se usa para calculos personalizados que no se pueden expresar con `Sum`, `Min`, `Max` o `Average`.
+
+```csharp
+// Ejemplo 1: Productorio (multiplicacion de todos los numeros)
+int[] numeros = { 1, 2, 3, 4, 5 };
+int productorio = numeros.Aggregate(1, (acum, n) => acum * n);
+// Resultado: 120  (1x2x3x4x5)
+
+// Ejemplo 2: Construir una cadena de texto
+var palabras = new[] { "LINQ", "es", "poderoso" };
+string frase = palabras.Aggregate((actual, siguiente) =>
+    actual + " " + siguiente);
+// Resultado: "LINQ es poderoso"
+
+// Ejemplo 3: Encontrar el numero mayor manualmente
+int maximo = numeros.Aggregate((max, n) => n > max ? n : max);
+
+// Ejemplo 4: Acumular con semilla y proyeccion final
+string resumen = ventas.Aggregate(
+    seed: 0m,                                         // valor inicial
+    func: (total, v) => total + v.Monto,             // acumulacion
+    resultSelector: total => $"Total: ${total:N2}"   // proyeccion final
+);
+
+// Ejemplo 5: Calcular estadisticas completas en una sola pasada
+var stats = productos.Aggregate(
+    new { Min = decimal.MaxValue, Max = 0m, Total = 0m, Count = 0 },
+    (acc, p) => new {
+        Min   = Math.Min(acc.Min, p.Precio),
+        Max   = Math.Max(acc.Max, p.Precio),
+        Total = acc.Total + p.Precio,
+        Count = acc.Count + 1
+    },
+    result => new {
+        result.Min,
+        result.Max,
+        result.Total,
+        Promedio = result.Total / result.Count,
+        Rango = result.Max - result.Min
+    });
+
+// Ejemplo 6: Desviacion estandar
+var desvStd = ventas.Select(v => (double)v.Monto)
+    .Aggregate(
+        new { Sum = 0.0, SumSq = 0.0, Count = 0 },
+        (acc, val) => new {
+            Sum   = acc.Sum + val,
+            SumSq = acc.SumSq + val * val,
+            Count = acc.Count + 1
+        },
+        r => Math.Sqrt(r.SumSq / r.Count - Math.Pow(r.Sum / r.Count, 2)));
+
+// Ejemplo 7: Diccionario de frecuencia
+var frecuencia = productos
+    .Select(p => p.Categoria)
+    .Aggregate(
+        new Dictionary<string, int>(),
+        (acc, cat) =>
+        {
+            if (acc.ContainsKey(cat)) acc[cat]++;
+            else acc[cat] = 1;
+            return acc;
+        });
+
+// Ejemplo 8: StringBuilder para concatenacion eficiente
+var sb = productos.Aggregate(
+    new StringBuilder(),
+    (builder, p) => builder.AppendLine($"{p.Nombre}: ${p.Precio:F2}"),
+    builder => builder.ToString());
+```
+
+### 5.6 Dashboard de Agregados — Multiples Metricas
+
+```csharp
+public class ResumenVentas
+{
+    public int     TotalVentas    { get; set; }
+    public decimal MontoTotal     { get; set; }
+    public decimal PromedioVenta  { get; set; }
+    public decimal VentaMinima    { get; set; }
+    public decimal VentaMaxima    { get; set; }
+    public decimal DesviacionStd  { get; set; }
+    public decimal Mediana        { get; set; }
+}
+
+// Metodo 1: Con GroupBy (una sola pasada por la coleccion)
+var resumen = ventas
+    .GroupBy(_ => 1)           // agrupa todo en un solo grupo
+    .Select(g => new ResumenVentas
+    {
+        TotalVentas    = g.Count(),
+        MontoTotal     = g.Sum(v => v.Monto),
+        PromedioVenta  = g.Average(v => v.Monto),
+        VentaMinima    = g.Min(v => v.Monto),
+        VentaMaxima    = g.Max(v => v.Monto),
+        Mediana = g.OrderBy(v => v.Monto)
+                   .Skip(g.Count() / 2)
+                   .FirstOrDefault().Monto
+    })
+    .FirstOrDefault();
+
+// Metodo 2: Con Aggregate (una sola iteracion, mas eficiente)
+var stats = ventas.Aggregate(
+    new {
+        Count = 0, Sum = 0m, Min = decimal.MaxValue,
+        Max = decimal.MinValue, SumSq = 0.0
+    },
+    (acc, v) => new {
+        Count = acc.Count + 1,
+        Sum   = acc.Sum + v.Monto,
+        Min   = Math.Min(acc.Min, v.Monto),
+        Max   = Math.Max(acc.Max, v.Monto),
+        SumSq = acc.SumSq + (double)v.Monto * (double)v.Monto
+    },
+    r => new ResumenVentas {
+        TotalVentas   = r.Count,
+        MontoTotal    = r.Sum,
+        PromedioVenta = r.Sum / r.Count,
+        VentaMinima   = r.Min,
+        VentaMaxima   = r.Max,
+        DesviacionStd = (decimal)Math.Sqrt(r.SumSq / r.Count - Math.Pow(r.Sum / r.Count, 2))
+    });
+
+// Metodo 3: Con EF Core (se traduce a una sola consulta SQL)
+var resumenBD = await _ctx.Ventas
+    .Where(v => v.Fecha.Year == 2024)
+    .GroupBy(_ => 1)
+    .Select(g => new ResumenVentas
+    {
+        TotalVentas   = g.Count(),
+        MontoTotal    = g.Sum(v => v.Monto),
+        PromedioVenta = g.Average(v => v.Monto),
+        VentaMinima   = g.Min(v => v.Monto),
+        VentaMaxima   = g.Max(v => v.Monto)
+    })
+    .FirstOrDefaultAsync();
+```
+
+### 5.7 Agregados con GroupBy — Reportes Comunes
+
+```csharp
+// Reporte: Resumen completo por categoria
+var reporteCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria      = g.Key,
+        Cantidad       = g.Count(),
+        PrecioMin      = g.Min(p => p.Precio),
+        PrecioMax      = g.Max(p => p.Precio),
+        PrecioPromedio = g.Average(p => p.Precio),
+        StockTotal     = g.Sum(p => p.Stock),
+        ValorInventario = g.Sum(p => p.Precio * p.Stock),
+        Activos        = g.Count(p => p.Activo),
+        Agotados       = g.Count(p => p.Stock == 0)
+    })
+    .OrderByDescending(x => x.ValorInventario);
+
+// Reporte: Ranking de vendedores
+var rankingVendedores = ventas
+    .GroupBy(v => v.VendedorId)
+    .Select(g => new {
+        VendedorId     = g.Key,
+        TotalVentas    = g.Count(),
+        IngresoTotal   = g.Sum(v => v.Monto),
+        TicketPromedio = g.Average(v => v.Monto),
+        VentaMaxima    = g.Max(v => v.Monto),
+        ProductosDistintos = g.Select(v => v.ProductoId).Distinct().Count()
+    })
+    .OrderByDescending(x => x.IngresoTotal);
+
+// Reporte: Tendencia mensual con comparativa
+var tendenciaMensual = ventas
+    .GroupBy(v => new { v.Fecha.Year, v.Fecha.Month })
+    .Select(g => new {
+        Ano = g.Key.Year,
+        Mes = g.Key.Month,
+        Total = g.Sum(v => v.Monto),
+        Cantidad = g.Count()
+    })
+    .OrderBy(x => x.Ano).ThenBy(x => x.Mes)
+    .ToList();
+
+// Agregar variacion porcentual mes a mes
+var conVariacion = tendenciaMensual
+    .Select((item, index) => new {
+        item.Ano,
+        item.Mes,
+        item.Total,
+        item.Cantidad,
+        Variacion = index > 0
+            ? Math.Round((item.Total - tendenciaMensual[index - 1].Total)
+                       / tendenciaMensual[index - 1].Total * 100, 2)
+            : 0
+    });
+```
+
+### 5.8 Tabla Comparativa — Agregados con y sin LINQ
+
+| Operacion | Sin LINQ (imperativo) | Con LINQ (declarativo) |
+|-----------|----------------------|----------------------|
+| Contar activos | `int c=0; foreach(var p in list) if(p.Activo) c++;` | `list.Count(p => p.Activo)` |
+| Sumar precios | `decimal s=0; foreach(var p in list) s+=p.Precio;` | `list.Sum(p => p.Precio)` |
+| Encontrar maximo | `decimal m=0; foreach(var p in list) if(p.Precio>m) m=p.Precio;` | `list.Max(p => p.Precio)` |
+| Encontrar objeto max | Ordenar y tomar primero | `list.MaxBy(p => p.Precio)` |
+| Promedio por grupo | Dictionary + loop + division | `GroupBy().Select(g => g.Average())` |
+| Desviacion estandar | Dos bucles + Math.Sqrt | `Aggregate con SumSq` |
+
+---
+
+## 6. LINQ con Colecciones
+
+### Modelos de Ejemplo
+
+```csharp
+// Modelos base usados en todos los ejemplos
+public class Producto
+{
+    public int     Id        { get; set; }
+    public string  Nombre    { get; set; } = "";
+    public string  Categoria { get; set; } = "";
+    public decimal Precio    { get; set; }
+    public int     Stock     { get; set; }
+    public bool    Activo    { get; set; }
+    public List<string> Etiquetas { get; set; } = new();
+
+    // Propiedad calculada
+    public decimal PrecioConIVA => Precio * 1.16m;
+    public string  Estado => Stock > 20 ? "Disponible" :
+                            Stock > 0  ? "Bajo Stock" : "Agotado";
+}
+
+public class Cliente
+{
+    public int    Id     { get; set; }
+    public string Nombre { get; set; } = "";
+    public string Email  { get; set; } = "";
+    public string Ciudad { get; set; } = "";
+    public List<Pedido> Pedidos { get; set; } = new();
+}
+
+public class Venta
+{
+    public int      Id         { get; set; }
+    public int      ClienteId  { get; set; }
+    public int      ProductoId { get; set; }
+    public decimal  Monto      { get; set; }
+    public int      Cantidad   { get; set; }
+    public DateTime Fecha      { get; set; }
+    public string   VendedorId { get; set; } = "";
+}
+
+// Datos de ejemplo
+var productos = new List<Producto>
+{
+    new() { Id = 1, Nombre = "Laptop HP",         Categoria = "Computo",        Precio = 1200m, Stock = 15,  Activo = true,  Etiquetas = {"computo","premium"} },
+    new() { Id = 2, Nombre = "Mouse Logitech",    Categoria = "Accesorio",      Precio = 35m,   Stock = 100, Activo = true,  Etiquetas = {"accesorio","economico"} },
+    new() { Id = 3, Nombre = "Teclado Mecanico",  Categoria = "Accesorio",      Precio = 80m,   Stock = 45,  Activo = true,  Etiquetas = {"accesorio","gaming"} },
+    new() { Id = 4, Nombre = "Monitor Samsung",   Categoria = "Computo",        Precio = 450m,  Stock = 8,   Activo = true,  Etiquetas = {"computo","display"} },
+    new() { Id = 5, Nombre = "SSD Kingston 480GB",Categoria = "Almacenamiento", Precio = 55m,   Stock = 60,  Activo = true,  Etiquetas = {"almacenamiento","ssd"} },
+    new() { Id = 6, Nombre = "RAM DDR4 16GB",     Categoria = "Almacenamiento", Precio = 75m,   Stock = 50,  Activo = true,  Etiquetas = {"almacenamiento","ram"} },
+    new() { Id = 7, Nombre = "Impresora Epson",   Categoria = "Impresion",      Precio = 280m,  Stock = 12,  Activo = true,  Etiquetas = {"impresion"} },
+    new() { Id = 8, Nombre = "Auriculares Sony",  Categoria = "Accesorio",      Precio = 120m,  Stock = 25,  Activo = true,  Etiquetas = {"accesorio","audio"} },
+};
+```
+
+### Consultas con Tipos Anonimos
+
+```csharp
+// Proyectar solo los campos necesarios
+var catalogo = productos
+    .Where(p => p.Activo && p.Stock > 0)
+    .Select(p => new {
+        p.Id,
+        p.Nombre,
+        PrecioFormateado = $"${p.Precio:N2}",
+        ConIVA = $"${p.PrecioConIVA:N2}",
+        Disponible = p.Estado
+    })
+    .ToList();
+
+// Salida:
+// Id=1, Nombre="Laptop HP", PrecioFormateado="$1,200.00", ConIVA="$1,392.00", Disponible="Disponible"
+```
+
+### Consultas Anidadas (Sub-queries)
+
+```csharp
+// IDs de productos con stock bajo
+var idsStockBajo = productos
+    .Where(p => p.Stock < 10)
+    .Select(p => p.Id)
+    .ToHashSet();
+
+// Ventas de esos productos
+var ventasRiesgo = ventas
+    .Where(v => idsStockBajo.Contains(v.ProductoId))
+    .ToList();
+
+// Productos cuyo precio esta por encima del promedio de su categoria
+var sobrePromedio = productos
+    .GroupBy(p => p.Categoria)
+    .SelectMany(g => g.Where(p => p.Precio > g.Average(x => x.Precio)));
+
+// Top 3 productos mas caros de cada categoria
+var topPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        Top = g.OrderByDescending(p => p.Precio).Take(3)
+    });
+```
+
+### Diccionarios desde LINQ
+
+```csharp
+// ToLookup — como Dictionary pero admite claves duplicadas
+var ventasPorCliente = ventas.ToLookup(v => v.ClienteId);
+var ventasCliente5 = ventasPorCliente[5]; // O(1) acceso
+
+// ToDictionary — una entrada por clave (lanza si hay duplicados)
+var productoPorId = productos.ToDictionary(p => p.Id);
+var productoX = productoPorId[42]; // O(1) lookup
+
+// ToDictionary con selector de valor
+var nombrePorId = productos.ToDictionary(p => p.Id, p => p.Nombre);
+
+// ToDictionary con comparer personalizado
+var dictCaseInsensitive = productos.ToDictionary(
+    p => p.Nombre,
+    p => p,
+    StringComparer.OrdinalIgnoreCase);
+```
+
+### LINQ con Strings
+
+```csharp
+string texto = "LINQ es poderoso y flexible para consultar datos";
+
+// Palabras con mas de 3 letras ordenadas por longitud
+var palabras = texto.Split(' ')
+    .Where(p => p.Length > 3)
+    .OrderBy(p => p.Length)
+    .Select(p => $"{p} ({p.Length})");
+
+// Contar frecuencia de caracteres
+var frecuencia = texto.ToLower()
+    .Where(c => char.IsLetter(c))
+    .GroupBy(c => c)
+    .Select(g => new { Caracter = g.Key, Frecuencia = g.Count() })
+    .OrderByDescending(x => x.Frecuencia);
+
+// Verificar si es pangrama
+bool esPangrama = "abcdefghijklmnopqrstuvwxyz"
+    .All(c => texto.ToLower().Contains(c));
+```
+
+---
+
+## 7. LINQ con Entity Framework
+
+Entity Framework Core convierte LINQ en SQL automaticamente. Es el proveedor LINQ mas utilizado para bases de datos y reside exclusivamente en la Capa de Acceso a Datos (DAL).
+
+### Configuracion Basica
+
+```csharp
+// DbContext
+public class TiendaContext : DbContext
+{
+    public TiendaContext(DbContextOptions<TiendaContext> options) : base(options) { }
+
+    public DbSet<Producto> Productos { get; set; }
+    public DbSet<Cliente>  Clientes  { get; set; }
+    public DbSet<Venta>    Ventas    { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Producto>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Precio).HasColumnType("decimal(18,2)");
+            entity.HasOne(e => e.Categoria)
+                  .WithMany(c => c.Productos)
+                  .HasForeignKey(e => e.CategoriaId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Seed data
+        modelBuilder.Entity<Categoria>().HasData(
+            new Categoria { Id = 1, Nombre = "Computo" },
+            new Categoria { Id = 2, Nombre = "Accesorio" },
+            new Categoria { Id = 3, Nombre = "Almacenamiento" },
+            new Categoria { Id = 4, Nombre = "Impresion" }
+        );
+    }
+}
+```
+
+### Consultas EF Core + LINQ
+
+```csharp
+using var ctx = new TiendaContext();
+
+// Se traduce a: SELECT * FROM Productos WHERE Precio > 100 AND Activo = 1
+var productosCaros = await ctx.Productos
+    .Where(p => p.Precio > 100 && p.Activo)
+    .OrderBy(p => p.Nombre)
+    .ToListAsync();
+
+// Include — carga relaciones (JOIN en SQL)
+var ventasConCliente = await ctx.Ventas
+    .Include(v => v.Cliente)
+    .Include(v => v.Producto)
+        .ThenInclude(p => p.Categoria)
+    .Where(v => v.Fecha.Year == 2024)
+    .ToListAsync();
+
+// Proyeccion — evita cargar columnas innecesarias
+var resumen = await ctx.Ventas
+    .Where(v => v.Fecha >= DateTime.Now.AddMonths(-1))
+    .GroupBy(v => v.ClienteId)
+    .Select(g => new {
+        ClienteId  = g.Key,
+        TotalGasto = g.Sum(v => v.Monto),
+        NumPedidos = g.Count()
+    })
+    .OrderByDescending(x => x.TotalGasto)
+    .Take(10)
+    .ToListAsync();
+
+// AsNoTracking — consultas de solo lectura (mejor rendimiento)
+var productos = await ctx.Productos
+    .AsNoTracking()
+    .Where(p => p.Activo)
+    .OrderBy(p => p.Nombre)
+    .ToListAsync();
+
+// AsSplitQuery — evitar problema Cartesian Explosion (.NET 6+)
+var resultado = await ctx.Productos
+    .Include(p => p.Categoria)
+    .Include(p => p.Ventas)
+    .AsSplitQuery()     // Genera multiples queries SQL en vez de un solo JOIN
+    .ToListAsync();
+```
+
+### Consultas Raw SQL con LINQ
+
+```csharp
+// FromSqlRaw — consulta SQL pura
+var productos = ctx.Productos
+    .FromSqlRaw("SELECT * FROM Productos WHERE Precio > {0}", 100)
+    .Where(p => p.Activo)  // LINQ se combina con SQL
+    .OrderBy(p => p.Precio)
+    .ToList();
+
+// FromSqlInterpolated — SQL con interpolacion segura
+var minimo = 100m;
+var resultado = ctx.Productos
+    .FromSqlInterpolated($"SELECT * FROM Productos WHERE Precio > {minimo}")
+    .Include(p => p.Categoria)
+    .ToList();
+
+// ExecuteSqlRaw — para INSERT, UPDATE, DELETE directos
+int filas = ctx.Database.ExecuteSqlRaw(
+    "UPDATE Productos SET Stock = Stock + {0} WHERE CategoriaId = {1}", 10, 1);
+```
+
+### Stored Procedures con LINQ
+
+```csharp
+// SP que retorna entidades
+var productos = ctx.Productos
+    .FromSqlRaw("EXEC sp_ObtenerProductosPorCategoria @p0", categoriaId)
+    .ToList();
+
+// SP que retorna valores escalares
+var total = ctx.Database
+    .SqlQueryRaw<decimal>("EXEC sp_CalcularTotalVentas @p0, @p1", fechaInicio, fechaFin)
+    .First();
+
+// SP con parametros de salida
+var paramOut = new[]
+{
+    new SqlParameter("@CategoriaId", categoriaId),
+    new SqlParameter("@Total", SqlDbType.Decimal) { Direction = ParameterDirection.Output }
+};
+ctx.Database.ExecuteSqlRaw(
+    "EXEC @Total = sp_CalcularTotalPorCategoria @CategoriaId, @Total OUTPUT", paramOut);
+decimal resultado = (decimal)paramOut[1].Value;
+```
+
+### Migraciones EF Core
+
+```bash
+# Instalar herramientas EF Core
+dotnet tool install --global dotnet-ef
+
+# Crear la primera migracion
+dotnet ef migrations add InitialCreate --project DAL --startup-project Presentacion
+
+# Aplicar migracion a SQL Server
+dotnet ef database update --project DAL --startup-project Presentacion
+
+# Crear migracion posterior
+dotnet ef migrations add AgregarCampoDescripcion --project DAL --startup-project Presentacion
+
+# Eliminar ultima migracion (antes de aplicar)
+dotnet ef migrations remove --project DAL --startup-project Presentacion
+
+# Ver SQL generado por la migracion
+dotnet ef migrations script --project DAL --startup-project Presentacion
+```
+
+---
+
+## 8. LINQ Async — Patrones Asincronos
+
+Las operaciones asincronas son criticas en aplicaciones web y de servidor para no bloquear hilos mientras se espera la respuesta de la base de datos. EF Core proporciona versiones asincronas de todos los operadores de agregado y materializacion.
+
+### Operaciones Async de Agregado
+
+```csharp
+// ToListAsync — materializar async
+var productos = await ctx.Productos
+    .Where(p => p.Activo)
+    .OrderBy(p => p.Nombre)
+    .ToListAsync();
+
+// CountAsync — contar async
+int total = await ctx.Productos.CountAsync(p => p.Activo);
+
+// SumAsync — sumar async
+decimal totalIngresos = await ctx.Ventas.SumAsync(v => v.Monto);
+
+// AverageAsync — promedio async
+double promedio = await ctx.Productos.AverageAsync(p => (double)p.Precio);
+
+// MinAsync / MaxAsync — extremos async
+decimal minimo = await ctx.Productos.MinAsync(p => p.Precio);
+decimal maximo = await ctx.Productos.MaxAsync(p => p.Precio);
+
+// AnyAsync — verificar existencia async
+bool existe = await ctx.Productos.AnyAsync(p => p.Nombre == "Laptop HP");
+
+// FirstOrDefaultAsync — primer elemento async
+var producto = await ctx.Productos.FirstOrDefaultAsync(p => p.Id == 42);
+
+// SingleOrDefaultAsync — elemento unico async
+var admin = await ctx.Usuarios.SingleOrDefaultAsync(u => u.Rol == "Admin");
+```
+
+### IAsyncEnumerable — Streaming de Datos (.NET 5+)
+
+```csharp
+// StreamAsync — procesar resultados uno por uno sin cargar todos en memoria
+await foreach (var producto in ctx.Productos
+    .Where(p => p.Activo)
+    .AsAsyncEnumerable())
+{
+    ProcesarProducto(producto); // Se procesa uno a la vez
+}
+
+// Metodo que retorna IAsyncEnumerable
+public async IAsyncEnumerable<Producto> ObtenerProductosStreamAsync(
+    [EnumeratorCancellation] CancellationToken ct = default)
+{
+    await foreach (var producto in ctx.Productos
+        .Where(p => p.Activo)
+        .AsAsyncEnumerable()
+        .WithCancellation(ct))
+    {
+        yield return producto;
+    }
+}
+```
+
+### Cancellation Tokens
+
+```csharp
+public class ProductoService
+{
+    private readonly TiendaContext _ctx;
+
+    public async Task<List<Producto>> BuscarAsync(
+        string termino, CancellationToken ct = default)
+    {
+        // El token de cancelacion se propaga a la consulta SQL
+        return await _ctx.Productos
+            .Where(p => p.Nombre.Contains(termino))
+            .OrderBy(p => p.Nombre)
+            .ToListAsync(ct);  // Se cancela si ct se activa
+    }
+}
+```
+
+---
+
+## 9. LINQ to XML y JSON
+
+### LINQ to XML — Operaciones Completas
+
+```csharp
+using System.Xml.Linq;
+
+// Crear documento XML con LINQ
+var doc = new XDocument(
+    new XDeclaration("1.0", "utf-8", "yes"),
+    new XElement("Inventario",
+        new XAttribute("Fecha", DateTime.Now.ToString("yyyy-MM-dd")),
+        from p in productos
+        select new XElement("Producto",
+            new XAttribute("Id", p.Id),
+            new XElement("Nombre", p.Nombre),
+            new XElement("Precio", p.Precio),
+            new XElement("Categoria", p.Categoria),
+            new XElement("Stock", p.Stock)
+        )
+    )
+);
+
+// Consultar XML
+var caros = from p in doc.Descendants("Producto")
+            where (decimal)p.Element("Precio") > 100
+            orderby (decimal)p.Element("Precio") descending
+            select new {
+                Id = (int)p.Attribute("Id"),
+                Nombre = (string)p.Element("Nombre"),
+                Precio = (decimal)p.Element("Precio")
+            };
+
+// Modificar XML — aplicar descuento a una categoria
+doc.Descendants("Producto")
+    .Where(p => (string)p.Element("Categoria") == "Computo")
+    .ToList()
+    .ForEach(p => p.Element("Precio")?.SetValue(
+        (decimal)p.Element("Precio") * 0.9m));
+
+// Agregar nuevo elemento
+doc.Root!.Add(
+    new XElement("Producto",
+        new XAttribute("Id", 9),
+        new XElement("Nombre", "Webcam HD"),
+        new XElement("Precio", 65.00m),
+        new XElement("Categoria", "Accesorio"),
+        new XElement("Stock", 30)
+    ));
+
+// Eliminar elementos
+doc.Descendants("Producto")
+    .Where(p => (int)p.Attribute("Id") == 5)
+    .Remove();
+
+// Guardar a archivo
+doc.Save("inventario.xml");
+
+// Cargar desde archivo
+var docCargado = XDocument.Load("inventario.xml");
+```
+
+### LINQ to JSON — System.Text.Json
+
+```csharp
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+// Parsear y consultar JSON
+string json = """
+{
+    "productos": [
+        {"nombre": "Laptop HP", "precio": 1200, "categoria": "Computo"},
+        {"nombre": "Mouse Logitech", "precio": 35, "categoria": "Accesorio"},
+        {"nombre": "Monitor Samsung", "precio": 450, "categoria": "Computo"}
+    ]
+}
+""";
+
+var nodo = JsonNode.Parse(json);
+var productosJSON = nodo!["productos"]!.AsArray();
+
+// Consultar con LINQ
+var caros = productosJSON
+    .Where(p => (decimal)p!["precio"]! > 100)
+    .Select(p => new {
+        Nombre = (string)p!["nombre"]!,
+        Precio = (decimal)p!["precio"]!
+    });
+
+// Agregados sobre JSON
+var estadisticas = productosJSON
+    .GroupBy(p => (string)p!["categoria"]!)
+    .Select(g => new {
+        Categoria = g.Key,
+        Cantidad = g.Count(),
+        PrecioPromedio = g.Average(p => (decimal)p!["precio"]!)
+    });
+
+// Crear JSON con LINQ
+var jsonResult = new JsonObject {
+    ["resumen"] = new JsonObject {
+        ["total"] = productos.Count(),
+        ["valorInventario"] = productos.Sum(p => p.Precio * p.Stock),
+        ["categorias"] = new JsonArray(
+            productos
+                .GroupBy(p => p.Categoria)
+                .Select(g => (JsonNode)new JsonObject {
+                    ["nombre"] = g.Key,
+                    ["cantidad"] = g.Count(),
+                    ["promedio"] = g.Average(p => (double)p.Precio)
+                })
+                .ToArray()
+        )
+    }
+};
+
+// Serializar con formato indentado
+string jsonFormateado = jsonResult.ToJsonString(
+    new JsonSerializerOptions { WriteIndented = true });
+Console.WriteLine(jsonFormateado);
+```
+
+---
+
+## 10. Expresiones Lambda y Arboles de Expresion
+
+### Func y Action
+
+```csharp
+// Func<T, TResult> — delegado generico con retorno
 Func<Producto, bool> esCaro = p => p.Precio > 100;
 var caros = productos.Where(esCaro);
 
-// Func con múltiples parámetros
+// Func con multiples parametros
 Func<decimal, decimal, decimal> calcularIVA = (precio, tasa) =>
     precio * (1 + tasa);
-var conIVA = productos.Select(p =>
-    calcularIVA(p.Precio, 0.16m));
+var conIVA = productos.Select(p => calcularIVA(p.Precio, 0.16m));
 
-// Action<T>: Delegado sin retorno
+// Action<T> — delegado sin retorno
 Action<Producto> imprimir = p =>
     Console.WriteLine($"{p.Nombre}: ${p.Precio}");
 productos.ToList().ForEach(imprimir);
+
+// Predicate<T> — delegado que retorna bool
+Predicate<Producto> filtro = p => p.Activo && p.Stock > 0;
+var activos = productos.FindAll(filtro); // FindAll usa Predicate
 ```
 
-## Expression<T> — Árboles de expresión
+### Expression<T> — Arboles de Expresion
 
 ```csharp
 // Expression vs Func
-Func<Producto, bool> func = p => p.Precio > 100;     // Código ejecutable
-Expression<Func<Producto, bool>> expr = p => p.Precio > 100;  // Árbol de datos
+Func<Producto, bool> func = p => p.Precio > 100;              // Codigo ejecutable
+Expression<Func<Producto, bool>> expr = p => p.Precio > 100;  // Arbol de datos
 
 // EF Core usa Expression para traducir a SQL
-// Esto se traduce a: WHERE Precio > 100
-var resultado = context.Productos.Where(expr).ToList();
+var resultado = ctx.Productos.Where(expr).ToList();
+// Se traduce a: WHERE Precio > 100
 
-// Construcción dinámica de expresiones
+// Construir expresiones dinamicamente
 var param = Expression.Parameter(typeof(Producto), "p");
 var prop = Expression.Property(param, "Precio");
 var constant = Expression.Constant(100m);
 var comparison = Expression.GreaterThan(prop, constant);
 var lambda = Expression.Lambda<Func<Producto, bool>>(comparison, param);
 
-var dinamicos = context.Productos.Where(lambda).ToList();
+var dinamicos = ctx.Productos.Where(lambda).ToList();
 ```
 
-> 💡 **Tip:** Usa `Func<T>` para LINQ to Objects (en memoria) y `Expression<Func<T>>` para LINQ to SQL / EF Core (base de datos). EF Core no puede traducir `Func<T>` a SQL; necesita `Expression<T>` para analizar la consulta.
-
----
-
-# 12 — Ejecución Diferida vs Inmediata
-
-La ejecución diferida (deferred execution) es uno de los conceptos más importantes de LINQ. Significa que la consulta no se ejecuta en el momento de su definición, sino cuando se itera sobre los resultados. Esto permite construir consultas complejas por etapas sin penalización de rendimiento. La ejecución inmediata ocurre cuando se llama a un operador que materializa los resultados como `ToList()`, `ToArray()`, `Count()`, `First()`, etc. Comprender la diferencia es crucial para evitar bugs sutiles y problemas de rendimiento, especialmente en la Capa de Acceso a Datos.
-
-## Ejecución diferida (Deferred)
-
-```csharp
-// La consulta NO se ejecuta aquí
-var consulta = productos.Where(p => p.Precio > 100);
-
-// Se ejecuta AQUÍ al iterar
-foreach (var p in consulta) {
-    Console.WriteLine(p.Nombre);
-}
-
-// Si los datos cambian, la consulta refleja los cambios
-productos.Add(new Producto { Nombre = "Nuevo", Precio = 200 });
-// La próxima iteración de 'consulta' incluirá el nuevo producto
-```
-
-## Ejecución inmediata (Immediate)
-
-```csharp
-// ToList() fuerza ejecución inmediata
-var lista = productos.Where(p => p.Precio > 100).ToList();
-
-// Count() ejecuta inmediatamente
-int total = productos.Count(p => p.Activo);
-
-// First() ejecuta inmediatamente
-var primero = productos.First(p => p.Precio > 500);
-
-// ToDictionary() ejecuta inmediatamente
-var dict = productos.ToDictionary(p => p.Id);
-```
-
-> ⚠️ **Precaución:** Si iteras múltiples veces sobre una consulta diferida, la consulta se ejecuta múltiples veces. Usa `ToList()` para materializar si necesitas iterar más de una vez.
-
----
-
-# 13 — PLINQ (Parallel LINQ)
-
-PLINQ es una implementación paralela de LINQ que puede ejecutar consultas en múltiples núcleos del procesador simultáneamente. Es ideal para operaciones intensivas de CPU sobre grandes colecciones en memoria. Sin embargo, no es adecuado para operaciones de E/S como consultas a bases de datos, donde Entity Framework ya maneja la asincronía. En una arquitectura de 4 capas, PLINQ se usa en la capa de lógica de negocio para procesamiento pesado de datos ya cargados.
-
-## AsParallel / AsOrdered / WithCancellation
-
-```csharp
-// AsParallel: Ejecutar en paralelo
-var resultado = productos.AsParallel()
-    .Where(p => p.Precio > 100)
-    .Select(p => new { p.Nombre, p.Precio * 1.16m })
-    .ToList();
-
-// AsOrdered: Mantener orden original
-var ordenado = productos.AsParallel().AsOrdered()
-    .Where(p => p.Stock > 0)
-    .Select(p => p.Nombre)
-    .ToList();
-
-// WithDegreeOfParallelism: Limitar hilos
-var limitado = datos.AsParallel()
-    .WithDegreeOfParallelism(4)
-    .Where(x => x.Valor > 1000)
-    .ToList();
-
-// WithCancellation: Cancelar operación paralela
-var cts = new CancellationTokenSource();
-var cancelable = datos.AsParallel()
-    .WithCancellation(cts.Token)
-    .Select(x => Procesar(x));
-
-// ForAll: Ejecutar acción en paralelo sin reunir resultados
-productos.AsParallel()
-    .Where(p => p.Stock < 10)
-    .ForAll(p => EnviarAlertaStock(p));
-```
-
-> ⚠️ **Precaución:** PLINQ no siempre es más rápido. Para colecciones pequeñas o operaciones simples, el overhead de paralelización puede ser mayor que el beneficio. Usa `AsParallel()` solo cuando la operación por elemento sea costosa.
-
----
-
-# 14 — Patrones Avanzados
-
-Los patrones avanzados de LINQ incluyen la creación de operadores personalizados, el patrón PredicateBuilder para construir filtros dinámicos, y la implementación de tablas pivot usando LINQ. Estos patrones son especialmente útiles en la Capa de Lógica de Negocio de una arquitectura de 4 capas, donde las reglas de negocio requieren consultas complejas y dinámicas.
-
-## Operadores personalizados (Extension Methods)
-
-```csharp
-public static class LinqExtensions
-{
-    // Operador personalizado: Paginar
-    public static IEnumerable<T> Paginar<T>(
-        this IEnumerable<T> source, int pagina, int tamaño) =>
-        source.Skip((pagina - 1) * tamaño).Take(tamaño);
-
-    // Operador: Duplicados
-    public static IEnumerable<T> Duplicados<T>(
-        this IEnumerable<T> source) =>
-        source.GroupBy(x => x)
-              .Where(g => g.Count() > 1)
-              .Select(g => g.Key);
-
-    // Operador: Chunk (dividir en lotes)
-    public static IEnumerable<IEnumerable<T>> Chunk<T>(
-        this IEnumerable<T> source, int tamaño)
-    {
-        var lista = source.ToList();
-        for (int i = 0; i < lista.Count; i += tamaño)
-            yield return lista.Skip(i).Take(tamaño);
-    }
-}
-
-// Uso
-var pagina3 = productos.Paginar(3, 10);
-var duplicados = nombres.Duplicados();
-var lotes = pedidos.Chunk(50);
-```
-
-## PredicateBuilder — Filtros dinámicos
+### PredicateBuilder — Filtros Dinamicos
 
 ```csharp
 public static class PredicateBuilder
 {
-    public static Expression<Func<T, bool>> True<T>() =>
-        f => true;
-    public static Expression<Func<T, bool>> False<T>() =>
-        f => false;
+    public static Expression<Func<T, bool>> True<T>()  => f => true;
+    public static Expression<Func<T, bool>> False<T>() => f => false;
 
     public static Expression<Func<T, bool>> Or<T>(
         this Expression<Func<T, bool>> expr1,
@@ -1127,7 +1618,7 @@ public static class PredicateBuilder
             expr1.Parameters);
 }
 
-// Uso: Construir filtro dinámicamente
+// Uso: Construir filtro dinamicamente
 var filtro = PredicateBuilder.True<Producto>();
 
 if (!string.IsNullOrEmpty(categoria))
@@ -1136,132 +1627,474 @@ if (precioMin.HasValue)
     filtro = filtro.And(p => p.Precio >= precioMin);
 if (soloActivos)
     filtro = filtro.And(p => p.Activo);
+if (!string.IsNullOrEmpty(busqueda))
+    filtro = filtro.And(p => p.Nombre.Contains(busqueda));
 
-var resultado = context.Productos.Where(filtro).ToList();
+var resultado = ctx.Productos.Where(filtro).ToList();
 ```
 
-## Pivot con LINQ
-
-```csharp
-// Tabla pivot: Ventas por categoría y mes
-var pivot = ventas
-    .GroupBy(v => new { v.Producto.Categoria, v.Fecha.Month })
-    .Select(g => new {
-        g.Key.Categoria,
-        Mes = g.Key.Month,
-        Total = g.Sum(v => v.Cantidad * v.PrecioUnitario)
-    })
-    .GroupBy(x => x.Categoria)
-    .Select(g => new {
-        Categoria = g.Key,
-        Ene = g.FirstOrDefault(x => x.Mes == 1)?.Total ?? 0,
-        Feb = g.FirstOrDefault(x => x.Mes == 2)?.Total ?? 0,
-        Mar = g.FirstOrDefault(x => x.Mes == 3)?.Total ?? 0,
-        Total = g.Sum(x => x.Total)
-    });
-```
+> **Tip:** Usa `Func<T>` para LINQ to Objects (en memoria) y `Expression<Func<T>>` para LINQ to SQL / EF Core (base de datos). EF Core no puede traducir `Func<T>` a SQL; necesita `Expression<T>` para analizar la consulta.
 
 ---
 
-# 15 — Arquitectura de 4 Capas — Conceptos y Diseño
+## 11. Ejecucion Diferida vs Inmediata
 
-La arquitectura de 4 capas es un patrón de diseño que separa las responsabilidades de una aplicación en cuatro niveles bien definidos, cada uno con una función específica. Esta separación permite que cada capa sea desarrollada, probada y mantenida de forma independiente, lo que resulta en aplicaciones más robustas, escalables y fáciles de mantener. En el contexto de LINQ con SQL Server, cada capa utiliza LINQ de manera diferente: desde las consultas directas en la Capa de Acceso a Datos hasta las transformaciones y validaciones en la Capa de Lógica de Negocio, y el formateo de datos en la Capa de Presentación.
+La ejecucion diferida (deferred execution) es uno de los conceptos mas importantes de LINQ. La consulta no se ejecuta cuando se define, sino cuando se itera sobre los resultados.
 
-## Las 4 Capas
+### Ejecucion Diferida (Deferred)
 
-### 🎨 Capa de Presentación (UI Layer)
-Es la interfaz con el usuario. Puede ser una aplicación de consola, Windows Forms, WPF, ASP.NET MVC, o una API Web. Su única responsabilidad es mostrar datos al usuario y capturar sus entradas. **No debe contener lógica de negocio ni acceso directo a datos.** Usa LINQ exclusivamente para formatear y transformar datos para visualización.
+```csharp
+// La consulta NO se ejecuta aqui
+var consulta = productos.Where(p => p.Precio > 100);
 
-### ⚙️ Capa de Lógica de Negocio (BLL - Business Logic Layer)
-Contiene las reglas de negocio, validaciones, cálculos y orquestación de operaciones. Es el "cerebro" de la aplicación. Recibe solicitudes de la capa de presentación, aplica las reglas de negocio usando LINQ, y coordina las operaciones con la capa de datos. **Es donde se concentra el uso más intensivo de LINQ** para filtrar, agrupar, calcular y transformar datos según las reglas del negocio.
+// Se ejecuta AQUI al iterar
+foreach (var p in consulta)
+    Console.WriteLine(p.Nombre);
 
-### 🗄️ Capa de Acceso a Datos (DAL - Data Access Layer)
-Encapsula toda la lógica de acceso a la base de datos SQL Server. Implementa el patrón Repository y utiliza Entity Framework Core o LINQ to SQL para interactuar con la base de datos. Su responsabilidad es traducir las solicitudes de la BLL en consultas LINQ que se ejecutan contra SQL Server, y retornar los resultados como entidades o DTOs.
-
-### 📦 Capa de Entidades (Entity Layer)
-Contiene las clases que representan las tablas de la base de datos y los DTOs (Data Transfer Objects) que se usan para transferir datos entre capas. Es la capa más simple pero más compartida, ya que todas las demás capas dependen de ella. Las entidades se mapean directamente a las tablas de SQL Server usando Data Annotations o Fluent API.
-
-## Diagrama de Arquitectura
-
-```
-┌─────────────────────────────────────────┐
-│         CAPA DE PRESENTACIÓN            │
-│   (Console / WinForms / Web API)        │
-│   → Formateo, paginación, menús        │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│     CAPA DE LÓGICA DE NEGOCIO (BLL)     │
-│   (Servicios, Validaciones, Reglas)     │
-│   → LINQ: GroupBy, Aggregate, Where    │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│    CAPA DE ACCESO A DATOS (DAL)         │
-│   (Repositorios, DbContext, EF Core)    │
-│   → LINQ: Query Syntax, Include, Where │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│        CAPA DE ENTIDADES                │
-│   (Clases POCO, DTOs, ViewModels)       │
-│   → Data Annotations, Mapeo            │
-└─────────────────────────────────────────┘
-                 │
-                 ▼
-        ┌──────────────────┐
-        │   SQL Server      │
-        │   (Tablas, SPs)   │
-        └──────────────────┘
+// Si los datos cambian, la consulta refleja los cambios
+productos.Add(new Producto { Nombre = "Nuevo", Precio = 200 });
+// La proxima iteracion de 'consulta' incluira el nuevo producto
 ```
 
-## Estructura de la Solución en Visual Studio
+### Ejecucion Inmediata (Immediate)
 
-```
-LINQ_4Capas.sln
-├── Entidades/
-│   ├── Entidades.csproj
-│   ├── Producto.cs
-│   ├── Categoria.cs
-│   ├── Empleado.cs
-│   ├── Venta.cs
-│   └── DTOs/
-│       ├── ProductoDTO.cs
-│       └── VentaDTO.cs
-├── DAL/
-│   ├── DAL.csproj
-│   ├── AppDbContext.cs
-│   ├── Interfaces/
-│   │   └── IRepositorio.cs
-│   ├── Repositorio.cs
-│   ├── ProductoRepositorio.cs
-│   └── VentaRepositorio.cs
-├── BLL/
-│   ├── BLL.csproj
-│   ├── Interfaces/
-│   │   └── IProductoServicio.cs
-│   ├── ProductoServicio.cs
-│   ├── VentaServicio.cs
-│   └── ReporteServicio.cs
-└── Presentacion/
-    ├── Presentacion.csproj
-    └── Program.cs
+```csharp
+// ToList() fuerza ejecucion inmediata
+var lista = productos.Where(p => p.Precio > 100).ToList();
+
+// Count() ejecuta inmediatamente
+int total = productos.Count(p => p.Activo);
+
+// First() ejecuta inmediatamente
+var primero = productos.First(p => p.Precio > 500);
+
+// ToDictionary() ejecuta inmediatamente
+var dict = productos.ToDictionary(p => p.Id);
+
+// Todos los agregados ejecutan inmediatamente
+var suma = productos.Sum(p => p.Precio);
+var max = productos.Max(p => p.Precio);
+var any = productos.Any(p => p.Stock == 0);
 ```
 
-## Scripts SQL Server — Creación de tablas
+### Clasificacion de Operadores
+
+| Tipo | Operadores | Ejecucion |
+|------|-----------|-----------|
+| **Diferida (Streaming)** | `Where`, `Select`, `SelectMany`, `OrderBy`, `Take`, `Skip`, `Distinct` | Procesa un elemento a la vez |
+| **Diferida (Non-streaming)** | `OrderBy`, `GroupBy`, `Reverse`, `Concat` | Necesita todos los datos antes de emitir |
+| **Inmediata** | `ToList`, `ToArray`, `Count`, `Sum`, `First`, `Any`, `ToDictionary` | Ejecuta al momento |
+
+> **Precaucion:** Si iteras multiples veces sobre una consulta diferida, la consulta se ejecuta multiples veces. Usa `ToList()` para materializar si necesitas iterar mas de una vez.
+
+---
+
+## 12. PLINQ — LINQ Paralelo
+
+PLINQ ejecuta consultas en multiples nucleos del procesador simultaneamente. Es ideal para operaciones intensivas de CPU sobre grandes colecciones en memoria. **No es adecuado para operaciones de E/S como consultas a bases de datos.**
+
+```csharp
+// AsParallel — ejecutar en paralelo
+var resultado = datos.AsParallel()
+    .Where(x => x.EsValido())
+    .Select(x => x.Procesar())
+    .ToList();
+
+// AsOrdered — mantener orden original
+var ordenado = datos.AsParallel().AsOrdered()
+    .Where(x => x.Valor > 100)
+    .Select(x => x.Transformar())
+    .ToList();
+
+// WithDegreeOfParallelism — limitar hilos
+var limitado = datos.AsParallel()
+    .WithDegreeOfParallelism(4)
+    .Where(x => x.Valor > 1000)
+    .ToList();
+
+// WithCancellation — cancelar operacion paralela
+var cts = new CancellationTokenSource();
+var cancelable = datos.AsParallel()
+    .WithCancellation(cts.Token)
+    .Select(x => Procesar(x));
+
+// ForAll — ejecutar sin recolectar resultados
+datos.AsParallel()
+    .Where(p => p.Stock < 10)
+    .ForAll(p => EnviarAlertaStock(p));
+```
+
+> **Precaucion:** PLINQ no siempre es mas rapido. Para colecciones pequenas u operaciones simples, el overhead de paralelizacion puede ser mayor que el beneficio. Usa `AsParallel()` solo cuando la operacion por elemento sea costosa.
+
+---
+
+## 13. Arquitectura de 4 Capas con LINQ
+
+La arquitectura de 4 capas separa responsabilidades y centraliza el uso de LINQ en la capa de **Repositorio** y **Servicio**. Cada capa utiliza LINQ de manera diferente y para propositos distintos.
+
+```
++-------------------------------------------+
+|       CAPA DE PRESENTACION               |  <- Razor / Blazor / MVC / API
+|       (Controllers / Pages)              |     Solo llama servicios
++-------------------+-----------------------+
+                    |
++-------------------v-----------------------+
+|       CAPA DE SERVICIO (BLL)             |  <- Logica de negocio
+|       (Business Logic)                   |     Usa repositorios, aplica reglas
++-------------------+-----------------------+     LINQ: GroupBy, Aggregate, Where
+                    |
++-------------------v-----------------------+
+|       CAPA DE REPOSITORIO (DAL)          |  <- LINQ vive aqui
+|       (Data Access / Repository)         |     Consultas a la base de datos
++-------------------+-----------------------+     LINQ: Query Syntax, Include, Where
+                    |
++-------------------v-----------------------+
+|       CAPA DE DATOS                      |  <- Entity Framework Core
+|       (DbContext / Models)               |     Modelos y configuracion EF
++-------------------------------------------+
+                    |
+            +-------v-------+
+            |   SQL Server   |
+            +---------------+
+```
+
+### Estructura de la Solucion
+
+```
+TiendaLinq.sln
++-- src/
+|   +-- Tienda.Api/                  <- Proyecto ASP.NET Core
+|   |   +-- Controllers/
+|   |   |   +-- ProductosController.cs
+|   |   |   +-- VentasController.cs
+|   |   +-- Program.cs
+|   +-- Tienda.Core/                 <- Logica de negocio
+|   |   +-- Models/
+|   |   +-- DTOs/
+|   |   +-- Interfaces/
+|   |   +-- Services/
+|   +-- Tienda.Data/                 <- Acceso a datos
+|       +-- Context/
+|       +-- Repositories/
+|       +-- Migrations/
++-- tests/
+|   +-- Tienda.Tests.Unit/
+|   +-- Tienda.Tests.Integration/
++-- .github/
+|   +-- workflows/
+|       +-- ci.yml
++-- .gitignore
++-- README.md
+```
+
+### Capa 1 — Modelos (Data Layer)
+
+```csharp
+// Models/Producto.cs
+namespace Tienda.Models;
+
+public class Producto
+{
+    public int      Id             { get; set; }
+    public string   Nombre         { get; set; } = "";
+    public string   Categoria      { get; set; } = "";
+    public decimal  Precio         { get; set; }
+    public int      Stock          { get; set; }
+    public bool     Activo         { get; set; }
+    public DateTime FechaCreacion  { get; set; } = DateTime.Now;
+
+    // Relaciones
+    public ICollection<Venta> Ventas { get; set; } = new List<Venta>();
+}
+
+// DTOs/ProductoDTO.cs
+public class ProductoDTO
+{
+    public int     Id               { get; set; }
+    public string  Nombre           { get; set; } = "";
+    public string  Categoria        { get; set; } = "";
+    public decimal Precio           { get; set; }
+    public string  PrecioFormateado { get; set; } = "";
+    public string  Disponibilidad   { get; set; } = "";
+}
+
+public class ResumenProductosDto
+{
+    public int     TotalProductos  { get; set; }
+    public decimal ValorInventario { get; set; }
+    public decimal PrecioPromedio  { get; set; }
+    public decimal PrecioMinimo    { get; set; }
+    public decimal PrecioMaximo    { get; set; }
+    public int     TotalUnidades   { get; set; }
+}
+
+// Context/TiendaContext.cs
+public class TiendaContext : DbContext
+{
+    public TiendaContext(DbContextOptions<TiendaContext> options) : base(options) { }
+
+    public DbSet<Producto> Productos { get; set; }
+    public DbSet<Cliente>  Clientes  { get; set; }
+    public DbSet<Venta>    Ventas    { get; set; }
+}
+```
+
+### Capa 2 — Repositorio (Data Access / LINQ)
+
+```csharp
+// Repositories/IProductoRepository.cs
+namespace Tienda.Repositories;
+
+public interface IProductoRepository
+{
+    Task<IEnumerable<Producto>> ObtenerTodosAsync();
+    Task<IEnumerable<Producto>> ObtenerActivosAsync();
+    Task<Producto?>             ObtenerPorIdAsync(int id);
+    Task<IEnumerable<Producto>> BuscarAsync(string termino);
+    Task<IEnumerable<Producto>> ObtenerPorCategoriaAsync(string categoria);
+    Task<IEnumerable<Producto>> ObtenerStockBajoAsync(int umbral = 5);
+    Task<ResumenProductosDto>   ObtenerResumenAsync();
+    Task<Producto>              CrearAsync(Producto producto);
+    Task<Producto>              ActualizarAsync(Producto producto);
+    Task                        EliminarAsync(int id);
+}
+
+// Repositories/ProductoRepository.cs
+public class ProductoRepository : IProductoRepository
+{
+    private readonly TiendaContext _ctx;
+
+    public ProductoRepository(TiendaContext ctx) => _ctx = ctx;
+
+    // LINQ: obtener todos los activos ordenados
+    public async Task<IEnumerable<Producto>> ObtenerActivosAsync() =>
+        await _ctx.Productos
+            .Where(p => p.Activo)
+            .OrderBy(p => p.Categoria)
+            .ThenBy(p => p.Nombre)
+            .AsNoTracking()
+            .ToListAsync();
+
+    // LINQ: busqueda de texto
+    public async Task<IEnumerable<Producto>> BuscarAsync(string termino) =>
+        await _ctx.Productos
+            .Where(p => p.Activo &&
+                        (p.Nombre.Contains(termino) ||
+                         p.Categoria.Contains(termino)))
+            .OrderBy(p => p.Nombre)
+            .AsNoTracking()
+            .ToListAsync();
+
+    // LINQ: stock bajo
+    public async Task<IEnumerable<Producto>> ObtenerStockBajoAsync(int umbral = 5) =>
+        await _ctx.Productos
+            .Where(p => p.Activo && p.Stock <= umbral)
+            .OrderBy(p => p.Stock)
+            .AsNoTracking()
+            .ToListAsync();
+
+    // LINQ: resumen con AGREGADOS
+    public async Task<ResumenProductosDto> ObtenerResumenAsync()
+    {
+        var stats = await _ctx.Productos
+            .Where(p => p.Activo)
+            .GroupBy(_ => 1)
+            .Select(g => new ResumenProductosDto
+            {
+                TotalProductos   = g.Count(),
+                ValorInventario  = g.Sum(p => p.Precio * p.Stock),
+                PrecioPromedio   = g.Average(p => p.Precio),
+                PrecioMinimo     = g.Min(p => p.Precio),
+                PrecioMaximo     = g.Max(p => p.Precio),
+                TotalUnidades    = g.Sum(p => p.Stock)
+            })
+            .FirstOrDefaultAsync();
+
+        return stats ?? new ResumenProductosDto();
+    }
+
+    public async Task<Producto> CrearAsync(Producto producto)
+    {
+        _ctx.Productos.Add(producto);
+        await _ctx.SaveChangesAsync();
+        return producto;
+    }
+
+    public async Task<Producto> ActualizarAsync(Producto producto)
+    {
+        _ctx.Productos.Update(producto);
+        await _ctx.SaveChangesAsync();
+        return producto;
+    }
+
+    public async Task EliminarAsync(int id)
+    {
+        var producto = await _ctx.Productos.FindAsync(id);
+        if (producto != null)
+        {
+            producto.Activo = false; // Soft delete
+            await _ctx.SaveChangesAsync();
+        }
+    }
+}
+```
+
+### Capa 3 — Servicio (Business Logic)
+
+```csharp
+// Services/IProductoService.cs
+namespace Tienda.Services;
+
+public interface IProductoService
+{
+    Task<IEnumerable<ProductoDTO>> ObtenerCatalogoAsync();
+    Task<ProductoDTO?>             ObtenerDetalleAsync(int id);
+    Task<IEnumerable<ProductoDTO>> BuscarAsync(string termino);
+    Task<ResumenProductosDto>      ObtenerResumenAsync();
+    Task<ProductoDTO>              CrearProductoAsync(CrearProductoDto dto);
+    Task<bool>                     ActualizarPrecioAsync(int id, decimal nuevoPrecio);
+}
+
+// Services/ProductoService.cs
+public class ProductoService : IProductoService
+{
+    private readonly IProductoRepository _repo;
+    private readonly ILogger<ProductoService> _logger;
+
+    public ProductoService(IProductoRepository repo, ILogger<ProductoService> logger)
+    {
+        _repo   = repo;
+        _logger = logger;
+    }
+
+    public async Task<IEnumerable<ProductoDTO>> ObtenerCatalogoAsync()
+    {
+        var productos = await _repo.ObtenerActivosAsync();
+
+        // LINQ en la capa de servicio: transformacion a DTO
+        return productos.Select(p => new ProductoDTO
+        {
+            Id               = p.Id,
+            Nombre           = p.Nombre,
+            Categoria        = p.Categoria,
+            Precio           = p.Precio,
+            PrecioFormateado = $"${p.Precio:N2}",
+            Disponibilidad   = p.Stock switch
+            {
+                0     => "Sin stock",
+                <= 5  => "Poco stock",
+                <= 20 => "Stock normal",
+                _     => "Stock alto"
+            }
+        });
+    }
+
+    public async Task<ProductoDTO> CrearProductoAsync(CrearProductoDto dto)
+    {
+        if (dto.Precio <= 0)
+            throw new ArgumentException("El precio debe ser mayor a cero.");
+
+        var producto = new Producto
+        {
+            Nombre    = dto.Nombre.Trim(),
+            Categoria = dto.Categoria,
+            Precio    = dto.Precio,
+            Stock     = dto.Stock,
+            Activo    = true
+        };
+
+        var creado = await _repo.CrearAsync(producto);
+        _logger.LogInformation("Producto creado: {Id} - {Nombre}", creado.Id, creado.Nombre);
+
+        return new ProductoDTO { Id = creado.Id, Nombre = creado.Nombre };
+    }
+}
+```
+
+### Capa 4 — Presentacion (Controller / API)
+
+```csharp
+// Controllers/ProductosController.cs
+namespace Tienda.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ProductosController : ControllerBase
+{
+    private readonly IProductoService _service;
+
+    public ProductosController(IProductoService service) => _service = service;
+
+    [HttpGet]
+    public async Task<IActionResult> GetCatalogo() =>
+        Ok(await _service.ObtenerCatalogoAsync());
+
+    [HttpGet("buscar")]
+    public async Task<IActionResult> Buscar([FromQuery] string q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return BadRequest("El termino de busqueda no puede estar vacio.");
+        return Ok(await _service.BuscarAsync(q));
+    }
+
+    [HttpGet("resumen")]
+    public async Task<IActionResult> GetResumen() =>
+        Ok(await _service.ObtenerResumenAsync());
+
+    [HttpPost]
+    public async Task<IActionResult> Crear([FromBody] CrearProductoDto dto)
+    {
+        var creado = await _service.CrearProductoAsync(dto);
+        return CreatedAtAction(nameof(GetCatalogo), new { id = creado.Id }, creado);
+    }
+}
+```
+
+### Registro de Dependencias (Program.cs)
+
+```csharp
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<TiendaContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<IProductoService,    ProductoService>();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapControllers();
+app.Run();
+```
+
+### Resumen de LINQ por Capa
+
+| Capa | Operadores LINQ mas usados | Proposito |
+|------|---------------------------|-----------|
+| **Presentacion** | `Select`, `OrderBy`, `Take`, `Skip`, `Count`, `Sum` | Formateo, paginacion, resumenes visuales |
+| **BLL (Servicio)** | `Where`, `GroupBy`, `Aggregate`, `Any`, `All`, `Select` | Validaciones, reglas de negocio, calculos |
+| **DAL (Repositorio)** | `Where`, `Include`, `AsNoTracking`, `FirstOrDefault`, `OrderBy` | Consultas SQL, filtrado, carga de relaciones |
+| **Datos (Modelos)** | Data Annotations, `Expression<T>` | Mapeo, validacion de modelos |
+
+---
+
+## 14. Proyecto Integrado — CRUD Completo
+
+### Scripts SQL Server — Creacion de Tablas
 
 ```sql
--- Base de datos
 CREATE DATABASE Linq4CapasDB;
 GO
 
 USE Linq4CapasDB;
 GO
 
--- Tabla Categorías
 CREATE TABLE Categorias (
     Id            INT IDENTITY(1,1) PRIMARY KEY,
     Nombre        NVARCHAR(100) NOT NULL,
@@ -1270,7 +2103,6 @@ CREATE TABLE Categorias (
     FechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- Tabla Productos
 CREATE TABLE Productos (
     Id            INT IDENTITY(1,1) PRIMARY KEY,
     Nombre        NVARCHAR(200) NOT NULL,
@@ -1282,7 +2114,6 @@ CREATE TABLE Productos (
     FechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- Tabla Empleados
 CREATE TABLE Empleados (
     Id            INT IDENTITY(1,1) PRIMARY KEY,
     Nombre        NVARCHAR(100) NOT NULL,
@@ -1293,7 +2124,6 @@ CREATE TABLE Empleados (
     Activo        BIT NOT NULL DEFAULT 1
 );
 
--- Tabla Ventas
 CREATE TABLE Ventas (
     Id             INT IDENTITY(1,1) PRIMARY KEY,
     ProductoId     INT NOT NULL FOREIGN KEY REFERENCES Productos(Id),
@@ -1326,1135 +2156,23 @@ INSERT INTO Empleados (Nombre, Apellido, Departamento, Salario, FechaIngreso) VA
 ('Ana', 'Garcia', 'Ventas', 3500.00, '2020-06-01'),
 ('Jorge', 'Fernandez', 'TI', 5500.00, '2018-01-20'),
 ('Maria', 'Rodriguez', 'TI', 4500.00, '2021-09-10'),
-('Pedro', 'Martinez', 'Ventas', 3800.00, '2020-11-05'),
-('Laura', 'Sanchez', 'RRHH', 3200.00, '2022-02-14'),
-('Diego', 'Ramirez', 'RRHH', 3400.00, '2021-07-22');
+('Pedro', 'Martinez', 'Ventas', 3800.00, '2020-11-05');
 ```
 
-## Cadena de conexión (appsettings.json)
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=Linq4CapasDB;Trusted_Connection=True;TrustServerCertificate=True;"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information"
-    }
-  }
-}
-```
-
-> ⚠️ **Nota:** Para SQL Server Express use `Server=localhost\\SQLEXPRESS`. Para LocalDB use `Server=(localdb)\\mssqllocaldb`. Nunca almacene credenciales en el código fuente; use Azure Key Vault o variables de entorno para producción.
-
----
-
-# 16 — Capa de Entidades y Acceso a Datos (DAL)
-
-La Capa de Entidades define las clases POCO (Plain Old CLR Objects) que representan las tablas de SQL Server, y la Capa de Acceso a Datos (DAL) encapsula toda la lógica de interacción con la base de datos usando Entity Framework Core. El patrón Repository proporciona una abstracción sobre el DbContext, permitiendo cambiar la implementación de acceso a datos sin afectar la capa de negocio. Cada repositorio utiliza LINQ para construir consultas que se traducen a SQL y se ejecutan en SQL Server.
-
-## Entidades con Data Annotations
+### Configuracion de Inicio Completa
 
 ```csharp
-// ============================================
-// Entidades/Producto.cs
-// ============================================
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Entidades
-{
-    [Table("Productos")]
-    public class Producto
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(200)]
-        public string Nombre { get; set; } = string.Empty;
-
-        [StringLength(1000)]
-        public string? Descripcion { get; set; }
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Precio { get; set; }
-
-        [Required]
-        public int Stock { get; set; }
-
-        [Required]
-        [ForeignKey(nameof(Categoria))]
-        public int CategoriaId { get; set; }
-
-        public bool Activo { get; set; } = true;
-
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
-
-        // Propiedad de navegación
-        public virtual Categoria? Categoria { get; set; }
-    }
-}
-```
-
-```csharp
-// ============================================
-// Entidades/Categoria.cs
-// ============================================
-namespace Entidades
-{
-    [Table("Categorias")]
-    public class Categoria
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(100)]
-        public string Nombre { get; set; } = string.Empty;
-
-        [StringLength(500)]
-        public string? Descripcion { get; set; }
-
-        public bool Activa { get; set; } = true;
-
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
-
-        // Propiedad de navegación inversa
-        public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
-    }
-}
-```
-
-```csharp
-// ============================================
-// Entidades/Venta.cs
-// ============================================
-namespace Entidades
-{
-    [Table("Ventas")]
-    public class Venta
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Required]
-        public int ProductoId { get; set; }
-
-        [Required]
-        public int Cantidad { get; set; }
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal PrecioUnitario { get; set; }
-
-        public DateTime FechaVenta { get; set; } = DateTime.Now;
-
-        [Required]
-        public int VendedorId { get; set; }
-
-        public virtual Producto? Producto { get; set; }
-        public virtual Empleado? Vendedor { get; set; }
-    }
-}
-```
-
-## DTOs (Data Transfer Objects)
-
-```csharp
-// ============================================
-// Entidades/DTOs/ProductoDTO.cs
-// ============================================
-namespace Entidades.DTOs
-{
-    public class ProductoDTO
-    {
-        public int Id { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public decimal Precio { get; set; }
-        public int Stock { get; set; }
-        public string Categoria { get; set; } = string.Empty;
-        public decimal PrecioConIVA => Precio * 1.16m;
-        public string Estado => Stock > 20 ? "Disponible" :
-                                Stock > 0  ? "Bajo Stock" : "Agotado";
-    }
-
-    public class VentaDTO
-    {
-        public int Id { get; set; }
-        public string Producto { get; set; } = string.Empty;
-        public int Cantidad { get; set; }
-        public decimal PrecioUnitario { get; set; }
-        public decimal Total => Cantidad * PrecioUnitario;
-        public string Vendedor { get; set; } = string.Empty;
-        public DateTime FechaVenta { get; set; }
-    }
-}
-```
-
-## DbContext — Entity Framework Core
-
-```csharp
-// ============================================
-// DAL/AppDbContext.cs
-// ============================================
-using Microsoft.EntityFrameworkCore;
-using Entidades;
-
-namespace DAL
-{
-    public class AppDbContext : DbContext
-    {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options) { }
-
-        // DbSets - Representan las tablas de SQL Server
-        public DbSet<Producto> Productos { get; set; }
-        public DbSet<Categoria> Categorias { get; set; }
-        public DbSet<Empleado> Empleados { get; set; }
-        public DbSet<Venta> Ventas { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Configuración Fluent API (alternativa a Data Annotations)
-
-            modelBuilder.Entity<Producto>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Precio).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Nombre).HasMaxLength(200).IsRequired();
-                entity.HasOne(e => e.Categoria)
-                      .WithMany(c => c.Productos)
-                      .HasForeignKey(e => e.CategoriaId)
-                      .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            modelBuilder.Entity<Venta>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.PrecioUnitario).HasColumnType("decimal(18,2)");
-                entity.HasOne(e => e.Producto)
-                      .WithMany()
-                      .HasForeignKey(e => e.ProductoId);
-                entity.HasOne(e => e.Vendedor)
-                      .WithMany()
-                      .HasForeignKey(e => e.VendedorId);
-            });
-
-            // Seed data
-            modelBuilder.Entity<Categoria>().HasData(
-                new Categoria { Id = 1, Nombre = "Computo", Descripcion = "Equipos de computo" },
-                new Categoria { Id = 2, Nombre = "Accesorio", Descripcion = "Perifericos" },
-                new Categoria { Id = 3, Nombre = "Almacenamiento", Descripcion = "Dispositivos de almacenamiento" },
-                new Categoria { Id = 4, Nombre = "Impresion", Descripcion = "Impresoras y suministros" }
-            );
-        }
-    }
-}
-```
-
-## Interfaz y Repositorio Genérico
-
-```csharp
-// ============================================
-// DAL/Interfaces/IRepositorio.cs
-// ============================================
-using System.Linq.Expressions;
-
-namespace DAL.Interfaces
-{
-    public interface IRepositorio<T> where T : class
-    {
-        // Consultas LINQ diferidas
-        IEnumerable<T> ObtenerTodos();
-        IEnumerable<T> Obtener(Expression<Func<T, bool>> filtro);
-        T? ObtenerPorId(int id);
-
-        // Consultas con LINQ avanzado
-        IEnumerable<T> Obtener(
-            Expression<Func<T, bool>>? filtro = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? ordenarPor = null,
-            string? propiedadesIncluidas = null,
-            int? pagina = null,
-            int? tamañoPagina = null);
-
-        // Agregados con LINQ
-        int Contar(Expression<Func<T, bool>>? filtro = null);
-        decimal Sumar(Expression<Func<T, decimal>> selector,
-                      Expression<Func<T, bool>>? filtro = null);
-        T? Primero(Expression<Func<T, bool>> filtro);
-
-        // CRUD
-        void Agregar(T entidad);
-        void Actualizar(T entidad);
-        void Eliminar(int id);
-        void Eliminar(T entidad);
-    }
-}
-```
-
-```csharp
-// ============================================
-// DAL/Repositorio.cs
-// ============================================
-using Microsoft.EntityFrameworkCore;
-using DAL.Interfaces;
-using System.Linq.Expressions;
-
-namespace DAL
-{
-    public class Repositorio<T> : IRepositorio<T> where T : class
-    {
-        protected readonly AppDbContext _context;
-        protected readonly DbSet<T> _dbSet;
-
-        public Repositorio(AppDbContext context)
-        {
-            _context = context;
-            _dbSet = context.Set<T>();
-        }
-
-        // ── Obtener Todos ──
-        public virtual IEnumerable<T> ObtenerTodos()
-        {
-            return _dbSet.AsNoTracking().ToList();
-        }
-
-        // ── Obtener con filtro LINQ ──
-        public virtual IEnumerable<T> Obtener(Expression<Func<T, bool>> filtro)
-        {
-            return _dbSet.Where(filtro).AsNoTracking().ToList();
-        }
-
-        // ── Obtener por ID ──
-        public virtual T? ObtenerPorId(int id)
-        {
-            return _dbSet.Find(id);
-        }
-
-        // ── Obtener completo con LINQ avanzado ──
-        public virtual IEnumerable<T> Obtener(
-            Expression<Func<T, bool>>? filtro = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? ordenarPor = null,
-            string? propiedadesIncluidas = null,
-            int? pagina = null,
-            int? tamañoPagina = null)
-        {
-            IQueryable<T> consulta = _dbSet;
-
-            // Aplicar filtro Where
-            if (filtro != null)
-                consulta = consulta.Where(filtro);
-
-            // Incluir propiedades de navegación (Include)
-            if (!string.IsNullOrEmpty(propiedadesIncluidas))
-            {
-                foreach (var prop in propiedadesIncluidas.Split(',',
-                    StringSplitOptions.RemoveEmptyEntries))
-                    consulta = consulta.Include(prop.Trim());
-            }
-
-            // Aplicar ordenamiento (OrderBy / ThenBy)
-            if (ordenarPor != null)
-                consulta = ordenarPor(consulta);
-
-            // Aplicar paginación (Skip + Take)
-            if (pagina.HasValue && tamañoPagina.HasValue)
-                consulta = consulta
-                    .Skip((pagina.Value - 1) * tamañoPagina.Value)
-                    .Take(tamañoPagina.Value);
-
-            return consulta.AsNoTracking().ToList();
-        }
-
-        // ── Contar con LINQ ──
-        public int Contar(Expression<Func<T, bool>>? filtro = null)
-        {
-            return filtro == null
-                ? _dbSet.Count()
-                : _dbSet.Count(filtro);
-        }
-
-        // ── Sumar con LINQ ──
-        public decimal Sumar(Expression<Func<T, decimal>> selector,
-                             Expression<Func<T, bool>>? filtro = null)
-        {
-            return filtro == null
-                ? _dbSet.Sum(selector)
-                : _dbSet.Where(filtro).Sum(selector);
-        }
-
-        // ── Primero con LINQ ──
-        public T? Primero(Expression<Func<T, bool>> filtro)
-        {
-            return _dbSet.FirstOrDefault(filtro);
-        }
-
-        // ── CRUD ──
-        public void Agregar(T entidad) => _dbSet.Add(entidad);
-        public void Actualizar(T entidad) => _dbSet.Update(entidad);
-        public void Eliminar(int id) => _dbSet.Remove(ObtenerPorId(id)!);
-        public void Eliminar(T entidad) => _dbSet.Remove(entidad);
-    }
-}
-```
-
-## Repositorio Específico — ProductoRepositorio
-
-```csharp
-// ============================================
-// DAL/ProductoRepositorio.cs
-// ============================================
-using Microsoft.EntityFrameworkCore;
-using Entidades;
-
-namespace DAL
-{
-    public class ProductoRepositorio : Repositorio<Producto>
-    {
-        public ProductoRepositorio(AppDbContext context) : base(context) { }
-
-        // LINQ: Productos con su categoría (Include)
-        public IEnumerable<Producto> ObtenerConCategoria()
-        {
-            return _dbSet
-                .Include(p => p.Categoria)
-                .AsNoTracking()
-                .ToList();
-        }
-
-        // LINQ: Productos por categoría con Join
-        public IEnumerable<Producto> ObtenerPorCategoria(int categoriaId)
-        {
-            return _dbSet
-                .Where(p => p.CategoriaId == categoriaId && p.Activo)
-                .OrderBy(p => p.Nombre)
-                .Include(p => p.Categoria)
-                .AsNoTracking()
-                .ToList();
-        }
-
-        // LINQ: Productos con stock bajo
-        public IEnumerable<Producto> ObtenerStockBajo(int limiteStock = 10)
-        {
-            return _dbSet
-                .Where(p => p.Stock <= limiteStock && p.Activo)
-                .OrderBy(p => p.Stock)
-                .Include(p => p.Categoria)
-                .AsNoTracking()
-                .ToList();
-        }
-
-        // LINQ: Búsqueda con Contains
-        public IEnumerable<Producto> Buscar(string termino)
-        {
-            return _dbSet
-                .Where(p => p.Nombre.Contains(termino) ||
-                            (p.Descripcion != null && p.Descripcion.Contains(termino)))
-                .OrderBy(p => p.Nombre)
-                .AsNoTracking()
-                .ToList();
-        }
-
-        // LINQ: Estadísticas por categoría (GroupBy + Aggregates)
-        public object EstadisticasPorCategoria()
-        {
-            return _dbSet
-                .Include(p => p.Categoria)
-                .Where(p => p.Activo)
-                .GroupBy(p => p.Categoria!.Nombre)
-                .Select(g => new {
-                    Categoria = g.Key,
-                    Cantidad = g.Count(),
-                    PrecioPromedio = g.Average(p => p.Precio),
-                    PrecioMaximo = g.Max(p => p.Precio),
-                    StockTotal = g.Sum(p => p.Stock),
-                    ValorInventario = g.Sum(p => p.Precio * p.Stock)
-                })
-                .OrderByDescending(x => x.ValorInventario)
-                .ToList();
-        }
-    }
-}
-```
-
----
-
-# 17 — Capa de Lógica de Negocio (BLL)
-
-La Capa de Lógica de Negocio (BLL) es el corazón de la aplicación. Contiene las reglas de negocio, validaciones, cálculos y orquestación de operaciones. Los servicios de la BLL reciben solicitudes de la capa de presentación, aplican las reglas usando LINQ, y coordinan las operaciones con la DAL. Cada servicio encapsula una entidad de negocio y expone métodos que representan las operaciones que el usuario puede realizar. La BLL utiliza LINQ extensivamente para transformar entidades en DTOs, aplicar reglas de validación, calcular métricas y generar reportes.
-
-## Interfaz de Servicio
-
-```csharp
-// ============================================
-// BLL/Interfaces/IProductoServicio.cs
-// ============================================
-using Entidades.DTOs;
-
-namespace BLL.Interfaces
-{
-    public interface IProductoServicio
-    {
-        // Consultas
-        IEnumerable<ProductoDTO> ObtenerTodos();
-        ProductoDTO? ObtenerPorId(int id);
-        IEnumerable<ProductoDTO> Buscar(string termino);
-        IEnumerable<ProductoDTO> ObtenerPorCategoria(int categoriaId);
-        IEnumerable<ProductoDTO> ObtenerStockBajo();
-
-        // Reportes con LINQ
-        object EstadisticasPorCategoria();
-        object TopProductos(int cantidad = 5);
-        object VentasPorMes(int año);
-        object VentasPorVendedor(DateTime desde, DateTime hasta);
-
-        // CRUD
-        int CrearProducto(ProductoDTO dto);
-        bool ActualizarProducto(ProductoDTO dto);
-        bool EliminarProducto(int id);
-
-        // Paginación
-        (IEnumerable<ProductoDTO> Items, int TotalRegistros) ObtenerPaginado(
-            int pagina, int tamaño, string? buscar = null, int? categoriaId = null);
-    }
-}
-```
-
-## ProductoServicio — Implementación
-
-```csharp
-// ============================================
-// BLL/ProductoServicio.cs
-// ============================================
-using DAL;
-using DAL.Interfaces;
-using Entidades;
-using Entidades.DTOs;
-using BLL.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace BLL
-{
-    public class ProductoServicio : IProductoServicio
-    {
-        private readonly ProductoRepositorio _productoRepo;
-        private readonly IRepositorio<Venta> _ventaRepo;
-        private readonly IRepositorio<Categoria> _categoriaRepo;
-
-        public ProductoServicio(
-            ProductoRepositorio productoRepo,
-            IRepositorio<Venta> ventaRepo,
-            IRepositorio<Categoria> categoriaRepo)
-        {
-            _productoRepo = productoRepo;
-            _ventaRepo = ventaRepo;
-            _categoriaRepo = categoriaRepo;
-        }
-
-        // ── Obtener Todos: Entidad → DTO con LINQ Select ──
-        public IEnumerable<ProductoDTO> ObtenerTodos()
-        {
-            return _productoRepo.ObtenerConCategoria()
-                .Select(p => new ProductoDTO
-                {
-                    Id = p.Id,
-                    Nombre = p.Nombre,
-                    Precio = p.Precio,
-                    Stock = p.Stock,
-                    Categoria = p.Categoria?.Nombre ?? "Sin categoría"
-                })
-                .OrderBy(p => p.Nombre)
-                .ToList();
-        }
-
-        // ── Obtener Por ID: Select + FirstOrDefault ──
-        public ProductoDTO? ObtenerPorId(int id)
-        {
-            var producto = _productoRepo.ObtenerPorId(id);
-            if (producto == null) return null;
-
-            return new ProductoDTO
-            {
-                Id = producto.Id,
-                Nombre = producto.Nombre,
-                Precio = producto.Precio,
-                Stock = producto.Stock,
-                Categoria = producto.Categoria?.Nombre ?? ""
-            };
-        }
-
-        // ── Buscar: LINQ Where + Contains ──
-        public IEnumerable<ProductoDTO> Buscar(string termino)
-        {
-            if (string.IsNullOrWhiteSpace(termino))
-                return ObtenerTodos();
-
-            return _productoRepo.Buscar(termino)
-                .Select(p => new ProductoDTO
-                {
-                    Id = p.Id,
-                    Nombre = p.Nombre,
-                    Precio = p.Precio,
-                    Stock = p.Stock,
-                    Categoria = p.Categoria?.Nombre ?? ""
-                })
-                .ToList();
-        }
-
-        // ── Estadísticas: GroupBy + Sum + Average + Max ──
-        public object EstadisticasPorCategoria()
-        {
-            return _productoRepo.EstadisticasPorCategoria();
-        }
-
-        // ── Top Productos: OrderByDescending + Take ──
-        public object TopProductos(int cantidad = 5)
-        {
-            return _ventaRepo.Obtener(propiedadesIncluidas: "Producto")
-                .GroupBy(v => v.Producto?.Nombre ?? "Desconocido")
-                .Select(g => new
-                {
-                    Producto = g.Key,
-                    CantidadVendida = g.Sum(v => v.Cantidad),
-                    Ingresos = g.Sum(v => v.Cantidad * v.PrecioUnitario)
-                })
-                .OrderByDescending(x => x.Ingresos)
-                .Take(cantidad)
-                .ToList();
-        }
-
-        // ── Ventas por Mes: GroupBy + Sum con filtro ──
-        public object VentasPorMes(int año)
-        {
-            return _ventaRepo.Obtener(propiedadesIncluidas: "Producto")
-                .Where(v => v.FechaVenta.Year == año)
-                .GroupBy(v => v.FechaVenta.Month)
-                .Select(g => new
-                {
-                    Mes = g.Key,
-                    TotalVentas = g.Sum(v => v.Cantidad * v.PrecioUnitario),
-                    CantidadTransacciones = g.Count(),
-                    TicketPromedio = g.Average(v => v.Cantidad * v.PrecioUnitario)
-                })
-                .OrderBy(x => x.Mes)
-                .ToList();
-        }
-
-        // ── Ventas por Vendedor: Join + GroupBy ──
-        public object VentasPorVendedor(DateTime desde, DateTime hasta)
-        {
-            return _ventaRepo.Obtener(
-                filtro: v => v.FechaVenta >= desde && v.FechaVenta <= hasta,
-                propiedadesIncluidas: "Producto,Vendedor")
-                .GroupBy(v => v.Vendedor != null
-                    ? $"{v.Vendedor.Nombre} {v.Vendedor.Apellido}"
-                    : "Desconocido")
-                .Select(g => new
-                {
-                    Vendedor = g.Key,
-                    Total = g.Sum(v => v.Cantidad * v.PrecioUnitario),
-                    Cantidad = g.Count()
-                })
-                .OrderByDescending(x => x.Total)
-                .ToList();
-        }
-
-        // ── Paginación: Skip + Take con filtros dinámicos ──
-        public (IEnumerable<ProductoDTO> Items, int TotalRegistros) ObtenerPaginado(
-            int pagina, int tamaño, string? buscar = null, int? categoriaId = null)
-        {
-            var consulta = _productoRepo.ObtenerConCategoria().AsQueryable();
-
-            // Filtro dinámico con LINQ
-            if (!string.IsNullOrWhiteSpace(buscar))
-                consulta = consulta.Where(p =>
-                    p.Nombre.Contains(buscar) ||
-                    (p.Descripcion != null && p.Descripcion.Contains(buscar)));
-
-            if (categoriaId.HasValue)
-                consulta = consulta.Where(p => p.CategoriaId == categoriaId.Value);
-
-            var total = consulta.Count();
-
-            var items = consulta
-                .OrderBy(p => p.Nombre)
-                .Skip((pagina - 1) * tamaño)
-                .Take(tamaño)
-                .Select(p => new ProductoDTO
-                {
-                    Id = p.Id,
-                    Nombre = p.Nombre,
-                    Precio = p.Precio,
-                    Stock = p.Stock,
-                    Categoria = p.Categoria?.Nombre ?? ""
-                })
-                .ToList();
-
-            return (items, total);
-        }
-
-        // ── CRUD ──
-        public int CrearProducto(ProductoDTO dto)
-        {
-            // Validación con LINQ Any
-            if (string.IsNullOrWhiteSpace(dto.Nombre))
-                throw new ArgumentException("El nombre es obligatorio");
-
-            if (dto.Precio <= 0)
-                throw new ArgumentException("El precio debe ser mayor a 0");
-
-            var producto = new Producto
-            {
-                Nombre = dto.Nombre,
-                Precio = dto.Precio,
-                Stock = dto.Stock,
-                CategoriaId = int.Parse(dto.Categoria),
-                Activo = true
-            };
-
-            _productoRepo.Agregar(producto);
-            _context.SaveChanges();
-            return producto.Id;
-        }
-
-        public bool ActualizarProducto(ProductoDTO dto)
-        {
-            var producto = _productoRepo.ObtenerPorId(dto.Id);
-            if (producto == null) return false;
-
-            producto.Nombre = dto.Nombre;
-            producto.Precio = dto.Precio;
-            producto.Stock = dto.Stock;
-
-            _productoRepo.Actualizar(producto);
-            _context.SaveChanges();
-            return true;
-        }
-
-        public bool EliminarProducto(int id)
-        {
-            var producto = _productoRepo.ObtenerPorId(id);
-            if (producto == null) return false;
-
-            // Soft delete: marcar como inactivo
-            producto.Activo = false;
-            _productoRepo.Actualizar(producto);
-            _context.SaveChanges();
-            return true;
-        }
-    }
-}
-```
-
-## ReporteServicio — Reportes avanzados con LINQ
-
-```csharp
-// ============================================
-// BLL/ReporteServicio.cs
-// ============================================
-using DAL;
-using Entidades.DTOs;
-
-namespace BLL
-{
-    public class ReporteServicio
-    {
-        private readonly AppDbContext _context;
-
-        public ReporteServicio(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        // Reporte: Resumen general del inventario
-        public object ResumenInventario()
-        {
-            return _context.Productos
-                .Where(p => p.Activo)
-                .GroupBy(p => 1) // Agrupar todo en un solo grupo
-                .Select(g => new
-                {
-                    TotalProductos = g.Count(),
-                    ValorTotalInventario = g.Sum(p => p.Precio * p.Stock),
-                    PrecioPromedio = g.Average(p => p.Precio),
-                    StockTotal = g.Sum(p => p.Stock),
-                    ProductosAgotados = g.Count(p => p.Stock == 0),
-                    ProductosBajoStock = g.Count(p => p.Stock > 0 && p.Stock <= 10)
-                })
-                .First();
-        }
-
-        // Reporte: Ventas por categoría (Pivot)
-        public object VentasPorCategoriaPivot(int año)
-        {
-            return _context.Ventas
-                .Include(v => v.Producto)
-                    .ThenInclude(p => p.Categoria)
-                .Where(v => v.FechaVenta.Year == año)
-                .GroupBy(v => new { v.Producto.Categoria.Nombre, v.FechaVenta.Month })
-                .Select(g => new
-                {
-                    Categoria = g.Key.Nombre,
-                    Mes = g.Key.Month,
-                    Total = g.Sum(v => v.Cantidad * v.PrecioUnitario)
-                })
-                .ToList()
-                .GroupBy(x => x.Categoria)
-                .Select(g => new
-                {
-                    Categoria = g.Key,
-                    Ene = g.FirstOrDefault(x => x.Mes == 1)?.Total ?? 0,
-                    Feb = g.FirstOrDefault(x => x.Mes == 2)?.Total ?? 0,
-                    Mar = g.FirstOrDefault(x => x.Mes == 3)?.Total ?? 0,
-                    Abr = g.FirstOrDefault(x => x.Mes == 4)?.Total ?? 0,
-                    May = g.FirstOrDefault(x => x.Mes == 5)?.Total ?? 0,
-                    Jun = g.FirstOrDefault(x => x.Mes == 6)?.Total ?? 0,
-                    Total = g.Sum(x => x.Total)
-                })
-                .OrderByDescending(x => x.Total)
-                .ToList();
-        }
-
-        // Reporte: Tendencia de ventas mensual
-        public object TendenciaVentas(int año)
-        {
-            var meses = Enumerable.Range(1, 12);
-
-            return from m in meses
-                   join v in _context.Ventas
-                       .Where(v => v.FechaVenta.Year == año)
-                       .GroupBy(v => v.FechaVenta.Month)
-                       .Select(g => new { Mes = g.Key, Total = g.Sum(v => v.Cantidad * v.PrecioUnitario) })
-                       on m equals v.Mes into gv
-                   from v in gv.DefaultIfEmpty()
-                   select new
-                   {
-                       Mes = System.Globalization.CultureInfo.CurrentCulture
-                           .GetMonthName(m),
-                       Total = v?.Total ?? 0
-                   };
-        }
-    }
-}
-```
-
----
-
-# 18 — Capa de Presentación (UI)
-
-La Capa de Presentación es la interfaz con el usuario. En este caso, implementamos una aplicación de consola que consume los servicios de la BLL. La capa de presentación usa LINQ principalmente para formatear datos, crear menús interactivos, y mostrar resultados de manera legible. Nunca debe acceder directamente a la DAL ni contener lógica de negocio; su única responsabilidad es presentar la información y capturar las entradas del usuario.
-
-## Program.cs — Aplicación de Consola
-
-```csharp
-// ============================================
 // Presentacion/Program.cs
-// ============================================
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using DAL;
 using DAL.Interfaces;
 using BLL;
 using BLL.Interfaces;
 using Entidades.DTOs;
-
-class Program
-{
-    static IProductoServicio? _productoServicio;
-    static IServiceProvider? _serviceProvider;
-
-    static void Main(string[] args)
-    {
-        // ── Configurar Inyección de Dependencias ──
-        var services = new ServiceCollection();
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(
-                "Server=localhost;Database=Linq4CapasDB;" +
-                "Trusted_Connection=True;TrustServerCertificate=True;"));
-
-        services.AddScoped(typeof(IRepositorio<>), typeof(Repositorio<>));
-        services.AddScoped<ProductoRepositorio>();
-        services.AddScoped<IProductoServicio, ProductoServicio>();
-        services.AddScoped<ReporteServicio>();
-
-        _serviceProvider = services.BuildServiceProvider();
-        _productoServicio = _serviceProvider
-            .GetRequiredService<IProductoServicio>();
-
-        // ── Menú Principal ──
-        bool salir = false;
-        while (!salir)
-        {
-            Console.Clear();
-            MostrarEncabezado("LINQ 4 Capas - Sistema de Gestión");
-            Console.WriteLine("  1. Listar todos los productos");
-            Console.WriteLine("  2. Buscar productos");
-            Console.WriteLine("  3. Productos por categoría");
-            Console.WriteLine("  4. Productos con stock bajo");
-            Console.WriteLine("  5. Estadísticas por categoría");
-            Console.WriteLine("  6. Top 5 productos vendidos");
-            Console.WriteLine("  7. Ventas por mes");
-            Console.WriteLine("  8. Paginación de productos");
-            Console.WriteLine("  9. Crear producto");
-            Console.WriteLine("  10. Actualizar producto");
-            Console.WriteLine("  11. Eliminar producto");
-            Console.WriteLine("  0. Salir");
-            Console.Write("\n  Seleccione una opción: ");
-
-            switch (Console.ReadLine())
-            {
-                case "1": ListarProductos(); break;
-                case "2": BuscarProductos(); break;
-                case "3": ProductosPorCategoria(); break;
-                case "4": ProductosStockBajo(); break;
-                case "5": EstadisticasCategoria(); break;
-                case "6": TopProductos(); break;
-                case "7": VentasPorMes(); break;
-                case "8": Paginacion(); break;
-                case "9": CrearProducto(); break;
-                case "10": ActualizarProducto(); break;
-                case "11": EliminarProducto(); break;
-                case "0": salir = true; break;
-            }
-
-            if (!salir)
-            {
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
-            }
-        }
-    }
-
-    // ── Listar Todos: LINQ Select para formateo ──
-    static void ListarProductos()
-    {
-        var productos = _productoServicio!.ObtenerTodos();
-
-        MostrarEncabezado("Todos los Productos");
-
-        // LINQ en la presentación: formatear salida
-        var filas = productos.Select((p, i) =>
-            $"  {i + 1,3}. {p.Nombre,-25} | {p.Categoria,-15} | ${p.Precio,8:F2} | Stock: {p.Stock,4} | {p.Estado}");
-
-        foreach (var fila in filas)
-            Console.WriteLine(fila);
-
-        // Totales con LINQ
-        Console.WriteLine($"\n  Total: {productos.Count()} productos");
-        Console.WriteLine($"  Valor inventario: ${productos.Sum(p => p.Precio * p.Stock):F2}");
-    }
-
-    // ── Buscar: LINQ Where + Contains ──
-    static void BuscarProductos()
-    {
-        Console.Write("  Término de búsqueda: ");
-        var termino = Console.ReadLine() ?? "";
-
-        var resultados = _productoServicio!.Buscar(termino);
-
-        MostrarEncabezado($"Resultados para '{termino}'");
-        resultados.ToList().ForEach(p =>
-            Console.WriteLine($"  {p.Nombre,-25} | ${p.Precio,8:F2} | {p.Estado}"));
-    }
-
-    // ── Estadísticas: LINQ GroupBy + Aggregates ──
-    static void EstadisticasCategoria()
-    {
-        var stats = _productoServicio!.EstadisticasPorCategoria();
-        MostrarEncabezado("Estadísticas por Categoría");
-        Console.WriteLine(stats); // Serializar objeto dinámico
-    }
-
-    // ── Paginación: LINQ Skip + Take ──
-    static void Paginacion()
-    {
-        int pagina = 1;
-        int tamaño = 5;
-
-        while (true)
-        {
-            var (items, total) = _productoServicio!
-                .ObtenerPaginado(pagina, tamaño);
-
-            int totalPaginas = (int)Math.Ceiling((double)total / tamaño);
-
-            MostrarEncabezado($"Productos - Página {pagina}/{totalPaginas}");
-
-            items.ToList().ForEach(p =>
-                Console.WriteLine($"  {p.Nombre,-25} | ${p.Precio,8:F2} | {p.Estado}"));
-
-            Console.WriteLine($"\n  [A]nterior | [S]iguiente | [V]olver");
-            var key = Console.ReadKey(true).Key;
-
-            if (key == ConsoleKey.A && pagina > 1) pagina--;
-            else if (key == ConsoleKey.S && pagina < totalPaginas) pagina++;
-            else if (key == ConsoleKey.V) break;
-        }
-    }
-
-    static void MostrarEncabezado(string titulo)
-    {
-        Console.WriteLine($"\n  ╔══════════════════════════════════════════╗");
-        Console.WriteLine($"  ║  {titulo,-40}  ║");
-        Console.WriteLine($"  ╚══════════════════════════════════════════╝\n");
-    }
-}
-```
-
----
-
-# 19 — Entity Framework Core con SQL Server
-
-Entity Framework Core es el ORM oficial de Microsoft para .NET y el proveedor LINQ más utilizado para conectarse a SQL Server. Traduce consultas LINQ a código SQL de manera automática, maneja el seguimiento de cambios (change tracking), y proporciona migraciones para evolucionar el esquema de la base de datos. En una arquitectura de 4 capas, EF Core reside exclusivamente en la Capa de Acceso a Datos (DAL), donde el `DbContext` actúa como la unidad de trabajo (Unit of Work) y cada `DbSet` funciona como un repositorio.
-
-## Configuración y Migraciones
-
-```bash
-# Instalar herramientas EF Core
-dotnet tool install --global dotnet-ef
-
-# Crear la primera migración
-dotnet ef migrations add InitialCreate --project DAL --startup-project Presentacion
-
-# Aplicar migración a SQL Server
-dotnet ef database update --project DAL --startup-project Presentacion
-
-# Crear migración posterior
-dotnet ef migrations add AgregarCampoDescripcion --project DAL --startup-project Presentacion
-```
-
-## Consultas LINQ con EF Core
-
-```csharp
-// ── Include / ThenInclude: Carga ansiosa (Eager Loading) ──
-var productosConCategoria = _context.Productos
-    .Include(p => p.Categoria)
-    .ToList();
-
-// Include anidado: Producto → Categoria, Ventas → Producto
-var ventasDetalle = _context.Ventas
-    .Include(v => v.Producto)
-        .ThenInclude(p => p.Categoria)
-    .Include(v => v.Vendedor)
-    .ToList();
-
-// ── AsNoTracking: Consultas de solo lectura (mejor rendimiento) ──
-var productos = _context.Productos
-    .AsNoTracking()
-    .Where(p => p.Activo)
-    .OrderBy(p => p.Nombre)
-    .ToList();
-
-// ── Select: Proyección (solo campos necesarios → SQL optimizado) ──
-var resumen = _context.Productos
-    .Where(p => p.Activo)
-    .Select(p => new {
-        p.Nombre,
-        p.Precio,
-        Categoria = p.Categoria.Nombre
-    })
-    .ToList();
-// SQL generado: SELECT p.Nombre, p.Precio, c.Nombre FROM Productos p JOIN Categorias c...
-```
-
-## Eager Loading vs Lazy Loading
-
-```csharp
-// ── Eager Loading: Carga explícita con Include ──
-// Se carga todo en una sola consulta SQL con JOIN
-var eager = _context.Productos
-    .Include(p => p.Categoria)
-    .ToList();
-// SQL: SELECT * FROM Productos p LEFT JOIN Categorias c ON p.CategoriaId = c.Id
-
-// ── Lazy Loading: Carga automática al acceder a la propiedad ──
-// Requiere configuración: services.AddDbContext<...>(o => o.UseLazyLoadingProxies())
-var lazy = _context.Productos.First();
-var cat = lazy.Categoria; // ← Se ejecuta consulta SQL adicional aquí
-// SQL 1: SELECT TOP 1 * FROM Productos
-// SQL 2: SELECT * FROM Categorias WHERE Id = @p0
-
-// ── Explicit Loading: Carga manual explícita ──
-var producto = _context.Productos.First();
-_context.Entry(producto).Reference(p => p.Categoria).Load();
-```
-
-> 💡 **Mejor práctica:** Usa `AsNoTracking()` para consultas de solo lectura (hasta 30% más rápido). Usa Eager Loading (`Include`) cuando sabes que necesitas las relaciones. Evita Lazy Loading en APIs web porque genera múltiples consultas SQL (problema N+1).
-
-## Consultas Raw SQL con LINQ
-
-```csharp
-// FromSqlRaw: Consulta SQL pura
-var productos = _context.Productos
-    .FromSqlRaw("SELECT * FROM Productos WHERE Precio > {0}", 100)
-    .Where(p => p.Activo)  // LINQ se combina con SQL
-    .OrderBy(p => p.Precio)
-    .ToList();
-
-// FromSqlInterpolated: SQL con interpolación segura
-var minimo = 100m;
-var resultado = _context.Productos
-    .FromSqlInterpolated($"SELECT * FROM Productos WHERE Precio > {minimo}")
-    .Include(p => p.Categoria)
-    .ToList();
-
-// ExecuteSqlRaw: Para INSERT, UPDATE, DELETE directos
-int filas = _context.Database.ExecuteSqlRaw(
-    "UPDATE Productos SET Stock = Stock + {0} WHERE CategoriaId = {1}", 10, 1);
-```
-
-## Stored Procedures con LINQ
-
-```csharp
-// Ejecutar SP que retorna entidades
-var productos = _context.Productos
-    .FromSqlRaw("EXEC sp_ObtenerProductosPorCategoria @p0", categoriaId)
-    .ToList();
-
-// Ejecutar SP que retorna valores escalares
-var total = _context.Database
-    .SqlQueryRaw<decimal>("EXEC sp_CalcularTotalVentas @p0, @p1", fechaInicio, fechaFin)
-    .First();
-
-// SP con parámetros de salida
-var paramsOut = new[]
-{
-    new SqlParameter("@CategoriaId", categoriaId),
-    new SqlParameter("@Total", SqlDbType.Decimal) { Direction = ParameterDirection.Output }
-};
-_context.Database.ExecuteSqlRaw(
-    "EXEC @Total = sp_CalcularTotalPorCategoria @CategoriaId, @Total OUTPUT", paramsOut);
-decimal resultado = (decimal)paramsOut[1].Value;
-```
-
----
-
-# 20 — Proyecto Integrado — CRUD Completo con 4 Capas
-
-Este capítulo presenta un proyecto integrado que demuestra el funcionamiento completo de una aplicación con arquitectura de 4 capas conectada a SQL Server. Incluye todas las operaciones CRUD (Create, Read, Update, Delete) distribuidas correctamente entre las capas, con LINQ como lenguaje de consulta unificado en toda la solución.
-
-## Configuración de Inicio (Program.cs)
-
-```csharp
-// ============================================
-// Presentacion/Program.cs — Configuración completa
-// ============================================
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using DAL;
-using DAL.Interfaces;
-using BLL;
-using BLL.Interfaces;
 
 var services = new ServiceCollection();
 
-// 1. Registrar DbContext con SQL Server
+// 1. Registrar DbContext
 services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         "Server=localhost;Database=Linq4CapasDB;" +
@@ -2468,228 +2186,924 @@ services.AddScoped<ProductoRepositorio>();
 services.AddScoped<IProductoServicio, ProductoServicio>();
 services.AddScoped<ReporteServicio>();
 
-// 4. Construir proveedor
 var serviceProvider = services.BuildServiceProvider();
 
-// 5. Crear base de datos y aplicar migraciones automáticamente
+// 4. Crear base de datos y aplicar migraciones
 using (var scope = serviceProvider.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate(); // Crea la BD si no existe
-    Console.WriteLine("✓ Base de datos lista");
+    db.Database.Migrate();
 }
 
-// 6. Ejecutar aplicación
+// 5. DEMOSTRACION CRUD COMPLETO
 var productoServicio = serviceProvider.GetRequiredService<IProductoServicio>();
 var reporteServicio = serviceProvider.GetRequiredService<ReporteServicio>();
 
-// ── DEMOSTRACIÓN CRUD COMPLETO ──
-
-// CREATE: Agregar producto
-Console.WriteLine("\n► CREATE: Agregar producto");
+// CREATE
 int nuevoId = productoServicio.CrearProducto(new ProductoDTO
 {
-    Nombre = "Webcam HD 1080p",
-    Precio = 65.00m,
-    Stock = 30,
-    Categoria = "2" // Accesorio
+    Nombre = "Webcam HD 1080p", Precio = 65.00m, Stock = 30, Categoria = "2"
 });
-Console.WriteLine($"  Producto creado con ID: {nuevoId}");
+Console.WriteLine($"Producto creado con ID: {nuevoId}");
 
-// READ: Listar todos
-Console.WriteLine("\n► READ: Todos los productos");
+// READ
 var todos = productoServicio.ObtenerTodos();
 todos.Take(5).ToList().ForEach(p =>
     Console.WriteLine($"  {p.Nombre,-25} | ${p.Precio,8:F2} | {p.Estado}"));
 
-// READ: Buscar
-Console.WriteLine("\n► READ: Buscar 'Laptop'");
-var laptops = productoServicio.Buscar("Laptop");
-laptops.ToList().ForEach(p =>
-    Console.WriteLine($"  {p.Nombre,-25} | ${p.Precio,8:F2}"));
-
-// READ: Estadísticas
-Console.WriteLine("\n► READ: Estadísticas por categoría");
-var stats = productoServicio.EstadisticasPorCategoria();
-Console.WriteLine(stats);
-
-// UPDATE: Modificar producto
-Console.WriteLine("\n► UPDATE: Modificar producto");
+// UPDATE
 var actualizado = productoServicio.ActualizarProducto(new ProductoDTO
 {
-    Id = nuevoId,
-    Nombre = "Webcam HD 1080p Pro",
-    Precio = 79.99m,
-    Stock = 25,
-    Categoria = "2"
+    Id = nuevoId, Nombre = "Webcam HD 1080p Pro", Precio = 79.99m, Stock = 25, Categoria = "2"
 });
-Console.WriteLine($"  Producto actualizado: {actualizado}");
 
-// DELETE: Eliminar producto (soft delete)
-Console.WriteLine("\n► DELETE: Eliminar producto");
+// DELETE (soft delete)
 var eliminado = productoServicio.EliminarProducto(nuevoId);
-Console.WriteLine($"  Producto eliminado: {eliminado}");
 
-// REPORTES LINQ
-Console.WriteLine("\n► REPORTE: Top 5 productos");
+// REPORTES CON AGREGADOS
+var stats = productoServicio.EstadisticasPorCategoria();
 var top = productoServicio.TopProductos(5);
-Console.WriteLine(top);
-
-Console.WriteLine("\n► REPORTE: Resumen inventario");
 var resumen = reporteServicio.ResumenInventario();
-Console.WriteLine(resumen);
 ```
-
-**Salida de consola completa:**
-```
-✓ Base de datos lista
-
-► CREATE: Agregar producto
-  Producto creado con ID: 9
-
-► READ: Todos los productos
-  Auriculares Sony           | $120.00    | Disponible
-  Impresora Epson            | $280.00    | Disponible
-  Laptop HP                  | $1200.00   | Disponible
-  Monitor Samsung            | $450.00    | Bajo Stock
-  Mouse Logitech             | $35.00     | Disponible
-
-► READ: Buscar 'Laptop'
-  Laptop HP                  | $1200.00
-
-► READ: Estadísticas por categoría
-  Computo        | 3 prod | Prom: $561.67 | Max: $1200.00 | Stock: 68  | Valor: $18,480.00
-  Accesorio      | 3 prod | Prom: $78.33  | Max: $120.00  | Stock: 170 | Valor: $6,050.00
-  Almacenamiento | 2 prod | Prom: $65.00  | Max: $75.00   | Stock: 110 | Valor: $6,350.00
-  Impresion      | 1 prod | Prom: $280.00 | Max: $280.00  | Stock: 12  | Valor: $3,360.00
-
-► UPDATE: Modificar producto
-  Producto actualizado: True
-
-► DELETE: Eliminar producto
-  Producto eliminado: True
-
-► REPORTE: Top 5 productos
-  Laptop HP          | 45 vendidos | $54,000.00
-  Monitor Samsung    | 30 vendidos | $13,500.00
-  Teclado Mecanico   | 60 vendidos | $4,800.00
-  SSD Kingston       | 80 vendidos | $4,400.00
-  Auriculares Sony   | 25 vendidos | $3,000.00
-```
-
-## Resumen de LINQ por Capa
-
-| Capa | Operadores LINQ más usados | Propósito |
-|------|---------------------------|-----------|
-| **Presentación** | `Select`, `OrderBy`, `Take`, `Skip`, `Count`, `Sum` | Formateo, paginación, resúmenes visuales |
-| **BLL** | `Where`, `GroupBy`, `Aggregate`, `Any`, `All`, `Select` | Validaciones, reglas de negocio, cálculos |
-| **DAL** | `Where`, `Include`, `AsNoTracking`, `FirstOrDefault`, `OrderBy` | Consultas SQL, filtrado, carga de relaciones |
-| **Entidades** | Data Annotations, `Expression<T>` | Mapeo, validación de modelos |
 
 ---
 
-## 📋 Referencia Rápida de Operadores LINQ
+## 15. Patrones Avanzados y Operadores Custom
 
-### Filtrado
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Extension Methods Personalizados
+
+```csharp
+public static class LinqExtensions
+{
+    // Paginacion generica
+    public static IEnumerable<T> Paginar<T>(
+        this IEnumerable<T> source, int pagina, int tamano) =>
+        source.Skip((pagina - 1) * tamano).Take(tamano);
+
+    // Duplicados
+    public static IEnumerable<T> Duplicados<T>(
+        this IEnumerable<T> source) =>
+        source.GroupBy(x => x)
+              .Where(g => g.Count() > 1)
+              .Select(g => g.Key);
+
+    // Shuffle — mezclar aleatoriamente
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) =>
+        source.OrderBy(_ => Random.Shared.Next());
+
+    // DistinctBy con expresion (para versiones antes de .NET 6)
+    public static IEnumerable<T> DistinctBy<T, TKey>(
+        this IEnumerable<T> source, Func<T, TKey> keySelector) =>
+        source.GroupBy(keySelector).Select(g => g.First());
+
+    // WhereIf — aplicar filtro condicional
+    public static IEnumerable<T> WhereIf<T>(
+        this IEnumerable<T> source, bool condition, Func<T, bool> predicate) =>
+        condition ? source.Where(predicate) : source;
+
+    // Para IQueryable (EF Core)
+    public static IQueryable<T> WhereIf<T>(
+        this IQueryable<T> source, bool condition,
+        Expression<Func<T, bool>> predicate) =>
+        condition ? source.Where(predicate) : source;
+}
+
+// Uso
+var pagina3 = productos.Paginar(3, 10);
+var dups = nombres.Duplicados();
+var mezclados = productos.Shuffle();
+var filtrado = productos.WhereIf(!string.IsNullOrEmpty(busqueda), p => p.Nombre.Contains(busqueda));
+```
+
+### Tabla Pivot con LINQ
+
+```csharp
+// Pivot: Ventas por categoria y mes
+var pivot = ventas
+    .GroupBy(v => new { v.Producto.Categoria, v.Fecha.Month })
+    .Select(g => new {
+        g.Key.Categoria,
+        Mes = g.Key.Month,
+        Total = g.Sum(v => v.Cantidad * v.PrecioUnitario)
+    })
+    .GroupBy(x => x.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        Ene = g.FirstOrDefault(x => x.Mes == 1)?.Total ?? 0,
+        Feb = g.FirstOrDefault(x => x.Mes == 2)?.Total ?? 0,
+        Mar = g.FirstOrDefault(x => x.Mes == 3)?.Total ?? 0,
+        Abr = g.FirstOrDefault(x => x.Mes == 4)?.Total ?? 0,
+        May = g.FirstOrDefault(x => x.Mes == 5)?.Total ?? 0,
+        Jun = g.FirstOrDefault(x => x.Mes == 6)?.Total ?? 0,
+        Total = g.Sum(x => x.Total)
+    })
+    .OrderByDescending(x => x.Total);
+```
+
+### Paginacion Generica con Metadatos
+
+```csharp
+public class PagedResult<T>
+{
+    public IEnumerable<T> Items     { get; set; } = Enumerable.Empty<T>();
+    public int            Total     { get; set; }
+    public int            Pagina    { get; set; }
+    public int            TamanoPag { get; set; }
+    public int            TotalPags => (int)Math.Ceiling((double)Total / TamanoPag);
+    public bool           HayAnterior => Pagina > 1;
+    public bool           HaySiguiente => Pagina < TotalPags;
+}
+
+public static class PaginationExtensions
+{
+    public static async Task<PagedResult<T>> ToPagedAsync<T>(
+        this IQueryable<T> query, int pagina, int tamanoPag,
+        CancellationToken ct = default)
+    {
+        var total = await query.CountAsync(ct);
+        var items = await query
+            .Skip((pagina - 1) * tamanoPag)
+            .Take(tamanoPag)
+            .ToListAsync(ct);
+
+        return new PagedResult<T>
+        {
+            Items     = items,
+            Total     = total,
+            Pagina    = pagina,
+            TamanoPag = tamanoPag
+        };
+    }
+}
+
+// Uso
+var pagina = await ctx.Productos
+    .Where(p => p.Activo)
+    .OrderBy(p => p.Nombre)
+    .ToPagedAsync(pagina: 2, tamanoPag: 10);
+```
+
+---
+
+## 16. Casos de Uso Avanzados
+
+### Filtros Dinamicos con Expression
+
+```csharp
+public class FiltroProducto
+{
+    public string?  Categoria   { get; set; }
+    public decimal? PrecioMin   { get; set; }
+    public decimal? PrecioMax   { get; set; }
+    public bool?    Activo      { get; set; }
+    public string?  Busqueda    { get; set; }
+    public int?     StockMinimo { get; set; }
+}
+
+public static IQueryable<Producto> AplicarFiltros(
+    this IQueryable<Producto> query, FiltroProducto filtro)
+{
+    if (!string.IsNullOrWhiteSpace(filtro.Categoria))
+        query = query.Where(p => p.Categoria == filtro.Categoria);
+
+    if (filtro.PrecioMin.HasValue)
+        query = query.Where(p => p.Precio >= filtro.PrecioMin.Value);
+
+    if (filtro.PrecioMax.HasValue)
+        query = query.Where(p => p.Precio <= filtro.PrecioMax.Value);
+
+    if (filtro.Activo.HasValue)
+        query = query.Where(p => p.Activo == filtro.Activo.Value);
+
+    if (!string.IsNullOrWhiteSpace(filtro.Busqueda))
+        query = query.Where(p => p.Nombre.Contains(filtro.Busqueda));
+
+    if (filtro.StockMinimo.HasValue)
+        query = query.Where(p => p.Stock >= filtro.StockMinimo.Value);
+
+    return query;
+}
+
+// Uso
+var filtro = new FiltroProducto { Categoria = "Electronica", PrecioMax = 500 };
+var resultados = await ctx.Productos.AplicarFiltros(filtro).ToListAsync();
+```
+
+### Reporte de Ventas Completo con Agregados
+
+```csharp
+public class ReporteVentasService
+{
+    private readonly TiendaContext _ctx;
+
+    public ReporteVentasService(TiendaContext ctx) => _ctx = ctx;
+
+    public async Task<object> GenerarReporteAnualAsync(int ano)
+    {
+        var ventas = await _ctx.Ventas
+            .Include(v => v.Cliente)
+            .Include(v => v.Producto)
+            .Where(v => v.Fecha.Year == ano)
+            .ToListAsync();
+
+        return new
+        {
+            Ano = ano,
+
+            // Resumen general con agregados
+            TotalVentas    = ventas.Count,
+            IngresoTotal   = ventas.Sum(v => v.Monto),
+            TicketPromedio = ventas.Average(v => v.Monto),
+            VentaMaxima    = ventas.Max(v => v.Monto),
+            VentaMinima    = ventas.Min(v => v.Monto),
+
+            // Top 5 clientes por gasto
+            TopClientes = ventas
+                .GroupBy(v => v.Cliente.Nombre)
+                .Select(g => new { Cliente = g.Key, Total = g.Sum(v => v.Monto) })
+                .OrderByDescending(x => x.Total)
+                .Take(5),
+
+            // Ingresos por mes
+            IngresosPorMes = ventas
+                .GroupBy(v => v.Fecha.Month)
+                .Select(g => new { Mes = g.Key, Total = g.Sum(v => v.Monto) })
+                .OrderBy(x => x.Mes),
+
+            // Top 3 categorias mas vendidas
+            TopCategorias = ventas
+                .GroupBy(v => v.Producto.Categoria)
+                .Select(g => new {
+                    Categoria = g.Key,
+                    Cantidad  = g.Sum(v => v.Cantidad),
+                    Ingresos  = g.Sum(v => v.Monto)
+                })
+                .OrderByDescending(x => x.Ingresos)
+                .Take(3)
+        };
+    }
+}
+```
+
+---
+
+## 17. LINQ en GitHub — Repositorio de Ejemplo
+
+### .gitignore para Proyectos C#
+
+```gitignore
+# Build output
+bin/
+obj/
+*.user
+*.suo
+
+# Visual Studio
+.vs/
+*.csproj.user
+
+# Rider
+.idea/
+
+# NuGet
+packages/
+*.nupkg
+*.nuspec
+
+# Secretos y configuracion local
+appsettings.Development.json
+appsettings.Local.json
+*.pfx
+*.key
+
+# Cobertura de pruebas
+coverage/
+TestResults/
+```
+
+### GitHub Actions — CI/CD Completo
+
+```yaml
+# .github/workflows/ci.yml
+name: CI Pipeline - Build, Test & Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codigo
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar dependencias
+        run: dotnet restore
+
+      - name: Compilar solucion
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Ejecutar pruebas con cobertura
+        run: |
+          dotnet test --no-build --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage
+
+      - name: Publicar reporte de cobertura
+        uses: codecov/codecov-action@v4
+        with:
+          directory: ./coverage
+          fail_ci_if_error: false
+
+      - name: Publicar API
+        if: github.ref == 'refs/heads/main'
+        run: dotnet publish src/Tienda.Api -c Release -o ./publish
+
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tienda-api
+          path: ./publish
+```
+
+### Pruebas Unitarias de LINQ con Agregados
+
+```csharp
+// tests/Tienda.Tests.Unit/LinqAgregadosTests.cs
+using Xunit;
+using FluentAssertions;
+
+public class LinqAgregadosTests
+{
+    private List<Venta> CrearVentasEjemplo() => new()
+    {
+        new() { Id = 1, Monto = 500,  ClienteId = 1, Fecha = new DateTime(2024, 1, 15) },
+        new() { Id = 2, Monto = 1500, ClienteId = 2, Fecha = new DateTime(2024, 1, 20) },
+        new() { Id = 3, Monto = 750,  ClienteId = 1, Fecha = new DateTime(2024, 2, 5)  },
+        new() { Id = 4, Monto = 2000, ClienteId = 3, Fecha = new DateTime(2024, 2, 10) },
+        new() { Id = 5, Monto = 300,  ClienteId = 2, Fecha = new DateTime(2024, 3, 1)  },
+    };
+
+    [Fact]
+    public void Sum_DebeCalcularTotalCorrectamente()
+    {
+        var ventas = CrearVentasEjemplo();
+        var total  = ventas.Sum(v => v.Monto);
+        total.Should().Be(5050m);
+    }
+
+    [Fact]
+    public void Average_DebeCalcularPromedioCorrectamente()
+    {
+        var ventas   = CrearVentasEjemplo();
+        var promedio = ventas.Average(v => v.Monto);
+        promedio.Should().Be(1010m);
+    }
+
+    [Fact]
+    public void GroupBy_DebeAgruparPorClienteCorrectamente()
+    {
+        var ventas = CrearVentasEjemplo();
+
+        var porCliente = ventas
+            .GroupBy(v => v.ClienteId)
+            .Select(g => new { ClienteId = g.Key, Total = g.Sum(v => v.Monto) })
+            .OrderBy(x => x.ClienteId)
+            .ToList();
+
+        porCliente.Should().HaveCount(3);
+        porCliente[0].Total.Should().Be(1250m);  // Cliente 1: 500 + 750
+        porCliente[1].Total.Should().Be(1800m);  // Cliente 2: 1500 + 300
+        porCliente[2].Total.Should().Be(2000m);  // Cliente 3: 2000
+    }
+
+    [Fact]
+    public void Aggregate_DebeReducirCorrectamente()
+    {
+        var numeros     = new[] { 1, 2, 3, 4, 5 };
+        var productorio = numeros.Aggregate(1, (acc, n) => acc * n);
+        productorio.Should().Be(120);
+    }
+
+    [Fact]
+    public void MinBy_MaxBy_DebenEncontrarElementosExtremos()
+    {
+        var ventas   = CrearVentasEjemplo();
+        var masAlta  = ventas.MaxBy(v => v.Monto);
+        var masChica = ventas.MinBy(v => v.Monto);
+
+        masAlta!.Monto.Should().Be(2000m);
+        masChica!.Monto.Should().Be(300m);
+    }
+
+    [Fact]
+    public void Count_ConCondicion_DebeContarCorrectamente()
+    {
+        var ventas = CrearVentasEjemplo();
+        var grandes = ventas.Count(v => v.Monto > 1000);
+        grandes.Should().Be(2);
+    }
+
+    [Fact]
+    public void GroupBy_ConAgregados_DebeCalcularEstadisticas()
+    {
+        var ventas = CrearVentasEjemplo();
+
+        var stats = ventas
+            .GroupBy(_ => 1)
+            .Select(g => new {
+                Count = g.Count(),
+                Sum   = g.Sum(v => v.Monto),
+                Min   = g.Min(v => v.Monto),
+                Max   = g.Max(v => v.Monto)
+            })
+            .First();
+
+        stats.Count.Should().Be(5);
+        stats.Sum.Should().Be(5050m);
+        stats.Min.Should().Be(300m);
+        stats.Max.Should().Be(2000m);
+    }
+}
+```
+
+---
+
+## 18. Rendimiento y Optimizacion
+
+### Ver el SQL Generado por EF Core
+
+```csharp
+// Metodo 1: Logging
+var options = new DbContextOptionsBuilder<TiendaContext>()
+    .UseSqlServer(connectionString)
+    .LogTo(Console.WriteLine, LogLevel.Information)
+    .EnableSensitiveDataLogging()  // Muestra valores de parametros
+    .Options;
+
+// Metodo 2: ToQueryString() (.NET 6+)
+var sql = ctx.Productos
+    .Where(p => p.Precio > 100 && p.Activo)
+    .OrderBy(p => p.Nombre)
+    .ToQueryString();
+Console.WriteLine(sql);
+// SELECT [p].[Id], [p].[Nombre], [p].[Precio] ...
+// FROM [Productos] AS [p]
+// WHERE [p].[Precio] > 100.0 AND [p].[Activo] = CAST(1 AS bit)
+// ORDER BY [p].[Nombre]
+```
+
+### Optimizaciones Clave
+
+```csharp
+// 1. AsNoTracking — consultas de solo lectura (hasta 30% mas rapido)
+var productos = await ctx.Productos
+    .AsNoTracking()
+    .Where(p => p.Activo)
+    .ToListAsync();
+
+// 2. Proyeccion — solo campos necesarios
+var nombres = await ctx.Productos
+    .Where(p => p.Activo)
+    .Select(p => new { p.Id, p.Nombre })
+    .ToListAsync();
+
+// 3. AnyAsync en vez de CountAsync para verificar existencia
+bool existe = await ctx.Productos.AnyAsync(p => p.Nombre == "X");
+// NO: (await ctx.Productos.CountAsync(p => p.Nombre == "X")) > 0
+
+// 4. AsSplitQuery — evitar Cartesian Explosion (.NET 6+)
+var resultado = await ctx.Productos
+    .Include(p => p.Categoria)
+    .Include(p => p.Ventas)
+    .AsSplitQuery()
+    .ToListAsync();
+
+// 5. Select para calcular en BD en vez de memoria
+// MAL: carga todo y calcula en C#
+var productos = await ctx.Productos.ToListAsync();
+var total = productos.Sum(p => p.Precio * p.Stock);
+
+// BIEN: calcula en SQL
+var total = await ctx.Productos.SumAsync(p => p.Precio * p.Stock);
+
+// 6. Indices en SQL Server para columnas filtradas
+// CREATE INDEX IX_Productos_Activo ON Productos(Activo) WHERE Activo = 1;
+```
+
+### Comparativa de Rendimiento
+
+| Operacion | En Memoria | En BD (EF Core) | Diferencia |
+|-----------|-----------|----------------|------------|
+| Filtrar 1000 de 1M | Carga 1M, filtra | WHERE en SQL | 1000x mas rapido |
+| Sumar columna | Carga todo, Sum() | SUM() en SQL | Memoria: O(n), SQL: O(1) |
+| Contar con filtro | Count() en C# | COUNT() en SQL | SQL usa indices |
+| Proyeccion 2 campos | Carga 20 campos | SELECT 2 campos | 10x menos datos transferidos |
+
+---
+
+## 19. Errores Comunes y Buenas Practicas
+
+### Error 1: N+1 Query Problem
+
+```csharp
+// MAL — ejecuta 1 SELECT para clientes + N SELECTs para sus ventas
+var clientes = await ctx.Clientes.ToListAsync();
+foreach (var c in clientes)
+{
+    var ventas = await ctx.Ventas.Where(v => v.ClienteId == c.Id).ToListAsync();
+}
+
+// BIEN — una sola consulta con JOIN
+var clientes = await ctx.Clientes
+    .Include(c => c.Ventas)
+    .ToListAsync();
+```
+
+### Error 2: Ejecutar LINQ en Memoria Innecesariamente
+
+```csharp
+// MAL — carga TODA la tabla en memoria y filtra en C#
+var productos = await ctx.Productos.ToListAsync();
+var caros = productos.Where(p => p.Precio > 1000).ToList();
+
+// BIEN — el WHERE se traduce a SQL y filtra en la base de datos
+var caros = await ctx.Productos
+    .Where(p => p.Precio > 1000)
+    .ToListAsync();
+```
+
+### Error 3: Olvidar await en Consultas Async
+
+```csharp
+// MAL — retorna Task<List<>>, no List<>
+var productos = ctx.Productos.ToListAsync();
+
+// BIEN
+var productos = await ctx.Productos.ToListAsync();
+```
+
+### Error 4: Multiples Enumeraciones
+
+```csharp
+// MAL — evalua la consulta dos veces
+var query = ctx.Productos.Where(p => p.Activo);
+var count = query.Count();      // consulta 1 a SQL
+var lista = query.ToList();     // consulta 2 a SQL
+
+// BIEN — materializa una sola vez
+var lista  = await ctx.Productos.Where(p => p.Activo).ToListAsync();
+var count  = lista.Count;       // O(1) sobre la lista ya cargada
+```
+
+### Error 5: Funciones no traducibles en EF Core
+
+```csharp
+// MAL — EF Core no puede traducir este metodo a SQL
+var resultado = ctx.Productos.Where(p => MiMetodoCustom(p.Precio));
+
+// BIEN — usa expresiones que EF Core pueda traducir
+var resultado = ctx.Productos.Where(p => p.Precio > 100 && p.Activo);
+
+// Alternativa: AsEnumerable para evaluacion en cliente (solo si es necesario)
+var resultado = ctx.Productos
+    .Where(p => p.Activo)
+    .AsEnumerable()  // A partir de aqui, se evalua en memoria
+    .Where(p => MiMetodoCustom(p.Precio));
+```
+
+### Buenas Practicas Resumen
+
+| # | Practica | Ejemplo |
+|---|---------|---------|
+| 1 | Usa `AsNoTracking()` para solo lectura | `.AsNoTracking().Where(...)` |
+| 2 | Proyecta solo campos necesarios | `.Select(p => new { p.Id, p.Nombre })` |
+| 3 | Usa `AnyAsync` en vez de `CountAsync` | `.AnyAsync(p => p.Activo)` |
+| 4 | Incluye `CancellationToken` | `.ToListAsync(ct)` |
+| 5 | Usa `AsSplitQuery` para multiples Includes | `.AsSplitQuery()` |
+| 6 | Materializa una sola vez | `.ToListAsync()` una vez, reutiliza la lista |
+| 7 | Verifica SQL generado | `.ToQueryString()` |
+| 8 | Evita `ToList()` prematuro | Componer primero, materializar al final |
+
+---
+
+## 20. De SQL a LINQ — Guia de Migracion
+
+| SQL | LINQ Method | LINQ Query |
+|-----|-------------|------------|
+| `SELECT *` | `.Select(p => p)` | `select p` |
+| `SELECT col1, col2` | `.Select(p => new { p.Col1, p.Col2 })` | `select new { p.Col1, p.Col2 }` |
+| `WHERE cond` | `.Where(p => cond)` | `where cond` |
+| `ORDER BY col ASC` | `.OrderBy(p => p.Col)` | `orderby p.Col ascending` |
+| `ORDER BY col DESC` | `.OrderByDescending(p => p.Col)` | `orderby p.Col descending` |
+| `TOP 5` | `.Take(5)` | No disponible |
+| `DISTINCT` | `.Distinct()` | No disponible |
+| `COUNT(*)` | `.Count()` | No disponible |
+| `SUM(col)` | `.Sum(p => p.Col)` | No disponible |
+| `AVG(col)` | `.Average(p => p.Col)` | No disponible |
+| `MIN(col)` | `.Min(p => p.Col)` | No disponible |
+| `MAX(col)` | `.Max(p => p.Col)` | No disponible |
+| `GROUP BY col` | `.GroupBy(p => p.Col)` | `group p by p.Col` |
+| `HAVING cond` | `.GroupBy(...).Where(g => cond)` | `group ... into g where cond` |
+| `INNER JOIN` | `.Join(...)` | `join ... on ... equals ...` |
+| `LEFT JOIN` | `.GroupJoin(...).SelectMany(...DefaultIfEmpty())` | `join ... into ... from ... DefaultIfEmpty()` |
+| `OFFSET 10 ROWS FETCH NEXT 5` | `.Skip(10).Take(5)` | No disponible |
+| `IN (1,2,3)` | `.Where(p => ids.Contains(p.Id))` | `where ids.Contains(p.Id)` |
+| `LIKE '%text%'` | `.Where(p => p.Nombre.Contains("text"))` | `where p.Nombre.Contains("text")` |
+| `BETWEEN 10 AND 20` | `.Where(p => p.Precio >= 10 && p.Precio <= 20)` | `where p.Precio >= 10 && p.Precio <= 20` |
+| `IS NULL` | `.Where(p => p.Desc == null)` | `where p.Desc == null` |
+| `CASE WHEN` | `.Select(p => new { Status = p.Stock > 0 ? "OK" : "No" })` | `select new { Status = p.Stock > 0 ? "OK" : "No" }` |
+
+### Ejemplos de Traduccion Completa
+
+```sql
+-- SQL Complejo
+SELECT c.Nombre, SUM(v.Monto) AS Total, COUNT(*) AS NumVentas
+FROM Ventas v
+INNER JOIN Clientes c ON v.ClienteId = c.Id
+WHERE v.Fecha >= '2024-01-01' AND v.Monto > 100
+GROUP BY c.Nombre
+HAVING SUM(v.Monto) > 5000
+ORDER BY Total DESC
+```
+
+```csharp
+// LINQ Equivalente
+var resultado = await ctx.Ventas
+    .Include(v => v.Cliente)
+    .Where(v => v.Fecha >= new DateTime(2024, 1, 1) && v.Monto > 100)
+    .GroupBy(v => v.Cliente.Nombre)
+    .Select(g => new {
+        Nombre = g.Key,
+        Total = g.Sum(v => v.Monto),
+        NumVentas = g.Count()
+    })
+    .Where(x => x.Total > 5000)
+    .OrderByDescending(x => x.Total)
+    .ToListAsync();
+```
+
+---
+
+## 21. Ejercicios y Desafios
+
+### Nivel Basico
+
+**Ejercicio 1:** Dada una lista de enteros `{3, 7, 12, 5, 18, 9, 21, 4}`, filtra los numeros mayores a 10 y ordenalos de mayor a menor.
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+int[] nums = { 3, 7, 12, 5, 18, 9, 21, 4 };
+var resultado = nums.Where(n => n > 10).OrderByDescending(n => n);
+// Resultado: 21, 18, 12
+```
+</details>
+
+**Ejercicio 2:** De una lista de productos, obtiene los nombres de los productos activos con precio menor a 50.
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+var nombres = productos
+    .Where(p => p.Activo && p.Precio < 50)
+    .Select(p => p.Nombre);
+```
+</details>
+
+### Nivel Intermedio
+
+**Ejercicio 3:** Calcula el valor total del inventario (Precio * Stock) por cada categoria, mostrando solo las categorias con valor mayor a 5000.
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+var valorPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        ValorTotal = g.Sum(p => p.Precio * p.Stock)
+    })
+    .Where(x => x.ValorTotal > 5000)
+    .OrderByDescending(x => x.ValorTotal);
+```
+</details>
+
+**Ejercicio 4:** Usando `Aggregate`, calcula el factorial de 10.
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+int factorial = Enumerable.Range(1, 10)
+    .Aggregate(1, (acc, n) => acc * n);
+// Resultado: 3628800
+```
+</details>
+
+**Ejercicio 5:** Encuentra los 3 productos mas caros de cada categoria.
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+var topPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        Top = g.OrderByDescending(p => p.Precio).Take(3).ToList()
+    });
+```
+</details>
+
+### Nivel Avanzado
+
+**Ejercicio 6:** Implementa un metodo de extension `MinByMaxBy` que encuentre el elemento con el valor minimo y maximo de una propiedad, retornando ambos en una tupla.
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+public static (T? Min, T? Max) MinByMaxBy<T, TKey>(
+    this IEnumerable<T> source,
+    Func<T, TKey> keySelector) where TKey : IComparable<TKey>
+{
+    var list = source.ToList();
+    if (!list.Any()) return (default, default);
+
+    var min = list.Aggregate((a, b) =>
+        keySelector(a).CompareTo(keySelector(b)) <= 0 ? a : b);
+    var max = list.Aggregate((a, b) =>
+        keySelector(a).CompareTo(keySelector(b)) >= 0 ? a : b);
+
+    return (min, max);
+}
+
+// Uso
+var (masBarato, masCaro) = productos.MinByMaxBy(p => p.Precio);
+```
+</details>
+
+**Ejercicio 7:** Crea una consulta que calcule la mediana de precios por categoria usando solo LINQ (sin metodos custom).
+
+<details>
+<summary>Solucion</summary>
+
+```csharp
+var medianaPorCategoria = productos
+    .GroupBy(p => p.Categoria)
+    .Select(g => new {
+        Categoria = g.Key,
+        Mediana = g.OrderBy(p => p.Precio)
+                   .Skip(g.Count() / 2)
+                   .First().Precio
+    });
+```
+</details>
+
+---
+
+## 22. Referencia Rapida
+
+### Operadores de Filtrado
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `Where` | `Where(Func<T,bool>)` | Filtra por predicado |
 | `OfType<T>` | `OfType<T>()` | Filtra por tipo |
 
-### Proyección
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Proyeccion
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `Select` | `Select(Func<T,R>)` | Transforma elementos |
 | `SelectMany` | `SelectMany(Func<T,IEnum<R>>)` | Aplana colecciones |
 
-### Ordenamiento
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Ordenamiento
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `OrderBy` | `OrderBy(Func<T,K>)` | Ordena ascendente |
 | `OrderByDescending` | `OrderByDescending(Func<T,K>)` | Ordena descendente |
 | `ThenBy` | `ThenBy(Func<T,K>)` | Orden secundario asc |
 | `ThenByDescending` | `ThenByDescending(Func<T,K>)` | Orden secundario desc |
 | `Reverse` | `Reverse()` | Invierte orden |
 
-### Agrupamiento
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
-| `GroupBy` | `GroupBy(Func<T,K>)` | Agrupa por clave (diferido) |
-| `ToLookup` | `ToLookup(Func<T,K>)` | Agrupa por clave (inmediato) |
-
-### Join
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
-| `Join` | `Join(inner, outerKey, innerKey, result)` | Inner join |
-| `GroupJoin` | `GroupJoin(inner, outerKey, innerKey, result)` | Group join / Left join |
-| `Zip` | `Zip(second, result)` | Combina por posición |
-
-### Agregado
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Agregado
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `Count` | `Count()` / `Count(Func<T,bool>)` | Cuenta elementos |
 | `LongCount` | `LongCount()` | Cuenta (long) |
 | `Sum` | `Sum(Func<T,N>)` | Suma valores |
-| `Min` | `Min(Func<T,N>)` | Valor mínimo |
-| `Max` | `Max(Func<T,N>)` | Valor máximo |
+| `Min` | `Min(Func<T,N>)` | Valor minimo |
+| `Max` | `Max(Func<T,N>)` | Valor maximo |
 | `Average` | `Average(Func<T,N>)` | Promedio |
+| `MinBy` | `MinBy(Func<T,K>)` | Elemento con minimo (.NET 6+) |
+| `MaxBy` | `MaxBy(Func<T,K>)` | Elemento con maximo (.NET 6+) |
 | `Aggregate` | `Aggregate(seed, func, result)` | Agregado personalizado |
 
-### Elementos
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Agrupacion
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
+| `GroupBy` | `GroupBy(Func<T,K>)` | Agrupa por clave (diferido) |
+| `ToLookup` | `ToLookup(Func<T,K>)` | Agrupa por clave (inmediato) |
+
+### Operadores de Join
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
+| `Join` | `Join(inner, outerKey, innerKey, result)` | Inner join |
+| `GroupJoin` | `GroupJoin(inner, outerKey, innerKey, result)` | Group join / Left join |
+| `Zip` | `Zip(second, result)` | Combina por posicion |
+
+### Operadores de Elemento
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `First` | `First()` / `First(Func<T,bool>)` | Primer elemento |
 | `FirstOrDefault` | `FirstOrDefault()` | Primero o default |
-| `Last` | `Last()` | Último elemento |
-| `LastOrDefault` | `LastOrDefault()` | Último o default |
-| `Single` | `Single()` | Elemento único |
-| `SingleOrDefault` | `SingleOrDefault()` | Único o default |
+| `Last` | `Last()` | Ultimo elemento |
+| `LastOrDefault` | `LastOrDefault()` | Ultimo o default |
+| `Single` | `Single()` | Elemento unico |
+| `SingleOrDefault` | `SingleOrDefault()` | Unico o default |
+| `ElementAt` | `ElementAt(int)` | Por indice |
+| `ElementAtOrDefault` | `ElementAtOrDefault(int)` | Por indice o default |
 
-### Cuantificación
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
-| `Any` | `Any()` / `Any(Func<T,bool>)` | ¿Hay alguno? |
-| `All` | `All(Func<T,bool>)` | ¿Todos cumplen? |
-| `Contains` | `Contains(item)` | ¿Contiene elemento? |
+### Operadores de Cuantificacion
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
+| `Any` | `Any()` / `Any(Func<T,bool>)` | Hay alguno? |
+| `All` | `All(Func<T,bool>)` | Todos cumplen? |
+| `Contains` | `Contains(item)` | Contiene elemento? |
 
-### Partición
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Particion
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `Take` | `Take(int)` | Primeros N |
 | `Skip` | `Skip(int)` | Saltar N |
 | `TakeWhile` | `TakeWhile(Func<T,bool>)` | Tomar mientras |
 | `SkipWhile` | `SkipWhile(Func<T,bool>)` | Saltar mientras |
 
-### Conjuntos
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Conjuntos
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `Distinct` | `Distinct()` | Sin duplicados |
-| `DistinctBy` | `DistinctBy(Func<T,K>)` | Sin duplicados por clave |
-| `Union` | `Union(second)` | Unión sin duplicados |
-| `Intersect` | `Intersect(second)` | Intersección |
+| `DistinctBy` | `DistinctBy(Func<T,K>)` | Sin duplicados por clave (.NET 6+) |
+| `Union` | `Union(second)` | Union sin duplicados |
+| `UnionBy` | `UnionBy(second, key)` | Union por clave (.NET 6+) |
+| `Intersect` | `Intersect(second)` | Interseccion |
+| `IntersectBy` | `IntersectBy(second, key)` | Interseccion por clave (.NET 6+) |
 | `Except` | `Except(second)` | Diferencia |
+| `ExceptBy` | `ExceptBy(second, key)` | Diferencia por clave (.NET 6+) |
+| `Concat` | `Concat(second)` | Concatenar con duplicados |
 
-### Conversión
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Conversion
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `ToArray` | `ToArray()` | Convertir a array |
 | `ToList` | `ToList()` | Convertir a lista |
 | `ToDictionary` | `ToDictionary(key, value)` | Convertir a diccionario |
+| `ToLookup` | `ToLookup(key, value)` | Convertir a lookup |
 | `ToHashSet` | `ToHashSet()` | Convertir a HashSet |
 | `AsEnumerable` | `AsEnumerable()` | Bajar a IEnumerable |
 | `AsQueryable` | `AsQueryable()` | Subir a IQueryable |
 | `Cast<T>` | `Cast<T>()` | Convertir tipos |
 
-### Generación
-| Operador | Firma | Descripción |
-|----------|-------|-------------|
+### Operadores de Generacion
+| Metodo | Firma | Descripcion |
+|--------|-------|-------------|
 | `Range` | `Enumerable.Range(start, count)` | Rango de enteros |
 | `Repeat` | `Enumerable.Repeat(value, count)` | Repetir valor |
-| `Empty` | `Enumerable.Empty<T>()` | Secuencia vacía |
+| `Empty` | `Enumerable.Empty<T>()` | Secuencia vacia |
+| `Chunk` | `Chunk(int size)` | Dividir en lotes (.NET 6+) |
+| `DefaultIfEmpty` | `DefaultIfEmpty()` | Secuencia con default si vacia |
+
+### Versiones Async (EF Core)
+| Metodo | Descripcion |
+|--------|-------------|
+| `ToListAsync()` | Materializar async |
+| `toArrayAsync()` | Array async |
+| `countAsync()` | Contar async |
+| `sumAsync(sel)` | Sumar async |
+| `averageAsync(sel)` | Promedio async |
+| `minAsync(sel)` | Minimo async |
+| `maxAsync(sel)` | Maximo async |
+| `anyAsync(pred)` | Existe async |
+| `firstOrDefaultAsync(pred)` | Primero async |
+| `singleOrDefaultAsync(pred)` | Unico async |
 
 ---
 
-## 🛠️ Paquetes NuGet Necesarios
+## Paquetes NuGet Necesarios
 
 ```xml
 <!-- DAL.csproj -->
@@ -2699,14 +3113,23 @@ Console.WriteLine(resumen);
   <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
 </ItemGroup>
 
-<!-- Presentacion.csproj -->
+<!-- API / Presentacion.csproj -->
 <ItemGroup>
   <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
   <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 </ItemGroup>
+
+<!-- Tests.csproj -->
+<ItemGroup>
+  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+  <PackageReference Include="xunit" Version="2.6.2" />
+  <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
+  <PackageReference Include="FluentAssertions" Version="6.12.0" />
+  <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+</ItemGroup>
 ```
 
 ---
 
-> 📘 **LINQ en C# — Manual Completo** | .NET 8+ | C# 12 | Visual Studio Community 2022 | SQL Server | Arquitectura 4 Capas
+> **LINQ en C# — Manual Completo** | .NET 8+ | C# 12 | Visual Studio 2022 | SQL Server | Arquitectura 4 Capas | GitHub Actions
