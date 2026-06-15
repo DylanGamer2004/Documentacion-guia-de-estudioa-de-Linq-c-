@@ -43,7 +43,7 @@
 <a id="s1-que-es-linq"></a>
 ## 1. Que es LINQ?
 
-![Arquitectura de LINQ](images/linq-architecture.png)
+![Arquitectura de LINQ](/linq-architecture.png)
 
 **LINQ** (*Language Integrated Query*) es una caracteristica de C# introducida en **.NET 3.5 (2007)** que permite realizar consultas sobre colecciones de datos utilizando una sintaxis integrada directamente en el lenguaje. Antes de LINQ, cada tipo de fuente de datos requeria una API diferente: SQL para bases de datos, XPath para XML, bucles `foreach` para colecciones en memoria. LINQ unifica todo esto bajo un modelo de programacion unico y consistente.
 
@@ -127,7 +127,7 @@ using System.Threading.Tasks;         // Async/await
 <a id="s2-tipos-de-linq"></a>
 ## 2. Tipos de LINQ
 
-![Tipos de LINQ](images/linq-types.png)
+![Tipos de LINQ](/linq-types.png)
 
 ```
 LINQ
@@ -337,7 +337,7 @@ var conDescuento2 = productos
 <a id="s4-operadores-estandar"></a>
 ## 4. Operadores Estandar
 
-![Operadores Estandar de LINQ](images/linq-operators.png)
+![Operadores Estandar de LINQ](/linq-operators.png)
 
 ### 4.1 Filtrado
 
@@ -692,7 +692,7 @@ var lotes = Enumerable.Range(1, 100).Chunk(10); // 10 lotes de 10 elementos
 <a id="s5-funciones-agregado"></a>
 ## 5. Funciones de Agregado — Guia Completa
 
-![Funciones de Agregado LINQ](images/linq-aggregate.png)
+![Funciones de Agregado LINQ](/linq-aggregate.png)
 
 Las funciones de agregado **reducen una coleccion a un unico valor**. Son esenciales para generar reportes, estadisticas y dashboard en cualquier aplicacion empresarial. En la arquitectura de 4 capas, las funciones de agregado se utilizan intensivamente en la **Capa de Logica de Negocio (BLL)** para calcular metricas que luego se presentan al usuario, y en la **Capa de Repositorio (DAL)** para consultas optimizadas que se traducen a SQL.
 
@@ -1204,7 +1204,7 @@ bool esPangrama = "abcdefghijklmnopqrstuvwxyz"
 <a id="s7-linq-entity-framework"></a>
 ## 7. LINQ con Entity Framework
 
-![Pipeline de EF Core con LINQ](images/linq-efcore.png)
+![Pipeline de EF Core con LINQ](/linq-efcore.png)
 
 Entity Framework Core convierte LINQ en SQL automaticamente. Es el proveedor LINQ mas utilizado para bases de datos y reside exclusivamente en la Capa de Acceso a Datos (DAL).
 
@@ -1660,7 +1660,7 @@ var resultado = ctx.Productos.Where(filtro).ToList();
 <a id="s11-ejecucion-diferida-inmediata"></a>
 ## 11. Ejecucion Diferida vs Inmediata
 
-![Ejecucion Diferida vs Inmediata](images/linq-execution.png)
+![Ejecucion Diferida vs Inmediata](/linq-execution.png)
 
 La ejecucion diferida (deferred execution) es uno de los conceptos mas importantes de LINQ. La consulta no se ejecuta cuando se define, sino cuando se itera sobre los resultados.
 
@@ -1715,7 +1715,7 @@ var any = productos.Any(p => p.Stock == 0);
 <a id="s12-plinq"></a>
 ## 12. PLINQ — LINQ Paralelo
 
-![PLINQ — Ejecucion Paralela](images/linq-plinq.png)
+![PLINQ — Ejecucion Paralela](/linq-plinq.png)
 
 PLINQ ejecuta consultas en multiples nucleos del procesador simultaneamente. Es ideal para operaciones intensivas de CPU sobre grandes colecciones en memoria. **No es adecuado para operaciones de E/S como consultas a bases de datos.**
 
@@ -1757,7 +1757,7 @@ datos.AsParallel()
 <a id="s13-arquitectura-4-capas"></a>
 ## 13. Arquitectura de 4 Capas con LINQ — Guia Completa
 
-![Arquitectura de 4 Capas con LINQ](images/linq-4capas.png)
+![Arquitectura de 4 Capas con LINQ](/linq-4capas.png)
 
 La arquitectura de 4 capas es un patron de diseno arquitectonico que separa las responsabilidades de una aplicacion en cuatro niveles bien definidos, cada uno con una funcion especifica y limites claros. Este patron es fundamental para construir aplicaciones empresariales robustas, escalables y faciles de mantener. En el contexto de LINQ con C# y SQL Server, cada capa utiliza LINQ de manera diferente: desde las consultas directas en la Capa de Acceso a Datos, pasando por las transformaciones y validaciones en la Capa de Logica de Negocio, hasta el formateo de datos en la Capa de Presentacion.
 
